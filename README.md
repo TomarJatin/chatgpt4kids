@@ -1,3 +1,5 @@
+starting commit: https://github.com/vercel/ai-chatbot/commit/9628c547554d534632d16e57b5c09ea639499147
+
 <a href="https://chat.vercel.ai/">
   <img alt="Next.js 14 and App Router-ready AI chatbot." src="app/(chat)/opengraph-image.png">
   <h1 align="center">Next.js AI Chatbot</h1>

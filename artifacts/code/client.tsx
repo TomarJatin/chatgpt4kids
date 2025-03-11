@@ -135,7 +135,11 @@ export const codeArtifact = new Artifact<'code', Metadata>({
         try {
           // @ts-expect-error - loadPyodide is not defined
           const currentPyodideInstance = await globalThis.loadPyodide({
-            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full/',
+            // indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full/',
+            //
+            // UPDATE:
+            // docs: https://pyodide.org/en/stable/usage/downloading-and-deploying.html
+            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.27.3/full/',
           });
 
           currentPyodideInstance.setStdout({

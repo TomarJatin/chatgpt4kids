@@ -59,6 +59,8 @@ function PureChatHeader({
         />
       )}
 
+      {/* NO NEED TO SHOW THIS, ALL CHILDRENS' CHATS ARE FOREVER PRIVATE! */}
+      {/* EDIT: On second thought, I think this makes it feel more private and secure! I'll see what others think. */}
       {!isReadonly && (
         <VisibilitySelector
           chatId={chatId}

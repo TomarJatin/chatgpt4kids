@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 import { MessageIcon, VercelIcon } from './icons';
 
+/*
 export const Overview = () => {
   return (
     <motion.div
@@ -46,6 +47,45 @@ export const Overview = () => {
           </Link>
           .
         </p>
+      </div>
+    </motion.div>
+  );
+};
+*/
+
+export const Overview = () => {
+  return (
+    <motion.div
+      key="overview"
+      className="max-w-3xl mx-auto md:mt-20"
+      initial={{ opacity: 0, scale: 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.98 }}
+      transition={{ delay: 0.5 }}
+    >
+      <div className="rounded-xl p-6 flex flex-col gap-2 leading-relaxed text-center max-w-xl">
+        <div className="flex flex-row justify-center items-center m-4">
+          <div className="bg-white rounded-full m-2 p-2 size-[120px] flex flex-row justify-center items-center border-2 border-gray-300">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt="Favicon Mascott"
+              // src="https://img.freepik.com/premium-vector/dolphin-vector-icon-dolphin-illustration-sign-dolphin-symbol-logo_186686-759.jpg"
+              src="https://cdn-icons-png.flaticon.com/512/427/427463.png"
+              className="size-[90px] "
+              style={{
+                width: "90px",
+                transform: "scaleX(-1) translateX(-5px)",
+              }}
+              referrerPolicy="no-referrer"
+              loading="eager"
+              fetchPriority="high"
+              decoding="sync"
+            />
+          </div>
+        </div>
+
+        <p>Favicon is a curious dolphin who can answer almost any question!</p>
+        <p>Ask him anything, and he will do his best to answer.</p>
       </div>
     </motion.div>
   );

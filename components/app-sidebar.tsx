@@ -35,7 +35,11 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               className="flex flex-row gap-3 items-center"
             >
               <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                ChatGPT<span className="font-extrabold">4</span>Kids
+                ChatGP
+                <span className="tracking-wider">
+                  T<span className="font-[700]">4</span>
+                </span>
+                Kids
               </span>
             </Link>
             <Tooltip>

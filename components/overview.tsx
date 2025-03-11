@@ -70,11 +70,13 @@ export const Overview = () => {
             <img
               alt="Favicon Mascott"
               // src="https://img.freepik.com/premium-vector/dolphin-vector-icon-dolphin-illustration-sign-dolphin-symbol-logo_186686-759.jpg"
-              src="https://cdn-icons-png.flaticon.com/512/427/427463.png"
+              // src="https://cdn-icons-png.flaticon.com/512/427/427463.png"
+              src="/static/dolphin-right.png"
               className="size-[90px] "
               style={{
                 width: "90px",
-                transform: "scaleX(-1) translateX(-5px)",
+                // transform: "scaleX(-1) translateX(-5px)",
+                transform: "translateX(5px)",
               }}
               referrerPolicy="no-referrer"
               loading="eager"

@@ -1,4 +1,4 @@
-export const DEFAULT_CHAT_MODEL: string = 'chat-model-small';
+export const DEFAULT_CHAT_MODEL: string = 'chat-model-large';
 
 interface ChatModel {
   id: string;
@@ -8,18 +8,19 @@ interface ChatModel {
 
 export const chatModels: Array<ChatModel> = [
   {
-    id: 'chat-model-small',
-    name: 'Small model',
-    description: 'Small model for fast, lightweight tasks',
-  },
-  {
     id: 'chat-model-large',
-    name: 'Large model',
-    description: 'Large model for complex, multi-step tasks',
+    name: 'Smart AI',
+    description: '(Default) Fit for all questions, simple or complex.',
   },
   {
     id: 'chat-model-reasoning',
-    name: 'Reasoning model',
-    description: 'Uses advanced reasoning',
+    name: 'Deep Thinking AI',
+    description: 'Uses advanced reasoning. Starts with a "thinking" step, then outputs a more well-thought-out response.',
+  },
+  {
+    id: 'chat-model-small',
+    name: 'Fast AI',
+    description:
+      'Faster, but simpler responses (can be less accurate and thorough than Smart AI).',
   },
 ];

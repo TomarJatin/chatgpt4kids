@@ -54,6 +54,8 @@ export function PureMessageActions({
           <TooltipContent>Copy</TooltipContent>
         </Tooltip>
 
+        {/* NO UPVOTE/DOWNVOTE BECAUSE THIS PRODUCT IS KIDS PRIVACY SENSITIVE */}
+        {/*
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -105,7 +107,10 @@ export function PureMessageActions({
           </TooltipTrigger>
           <TooltipContent>Upvote Response</TooltipContent>
         </Tooltip>
+        */}
 
+        {/* NO UPVOTE/DOWNVOTE BECAUSE THIS PRODUCT IS KIDS PRIVACY SENSITIVE */}
+        {/*
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -157,6 +162,7 @@ export function PureMessageActions({
           </TooltipTrigger>
           <TooltipContent>Downvote Response</TooltipContent>
         </Tooltip>
+        */}
       </div>
     </TooltipProvider>
   );

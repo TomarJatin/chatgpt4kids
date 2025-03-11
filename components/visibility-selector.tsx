@@ -32,12 +32,14 @@ const visibilities: Array<{
     description: 'Only you can access this chat',
     icon: <LockIcon />,
   },
+  /*
   {
     id: 'public',
     label: 'Public',
     description: 'Anyone with the link can access this chat',
     icon: <GlobeIcon />,
   },
+  */
 ];
 
 export function VisibilitySelector({
@@ -69,6 +71,8 @@ export function VisibilitySelector({
           className,
         )}
       >
+        {/* ONLY PRIVATE */}
+        {/*
         <Button
           variant="outline"
           className="hidden md:flex md:px-2 md:h-[34px]"
@@ -76,6 +80,14 @@ export function VisibilitySelector({
           {selectedVisibility?.icon}
           {selectedVisibility?.label}
           <ChevronDownIcon />
+        </Button>
+        */}
+        <Button
+          variant="outline"
+          className="hidden md:flex md:px-2 md:pe-2.5 md:h-[34px]"
+        >
+          {selectedVisibility?.icon}
+          {selectedVisibility?.label}
         </Button>
       </DropdownMenuTrigger>
 

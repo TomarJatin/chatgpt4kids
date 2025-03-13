@@ -16,23 +16,23 @@ interface SuggestedActionsProps {
 function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   const suggestedActions = [
     {
-      title: `What is life like`,
-      label: 'for a dolphin in the ocean?',
-      action: 'What is life like for a dolphin in the ocean?',
+      title: `What's a day in the life like`,
+      label: `for a dolphin in the ocean?`,
+      action: `What's a day in the life for a dolphin in the ocean?`,
     },
     {
       title: `Write code to`,
       label: `say "hello, world!" in Python`,
-      action: `Write code to say "hello, world!" in Python`,
+      action: `Write code to say "hello, world!" in Python.`,
     },
     {
       title: `Help me write a poem about`,
-      label: `a butterfly and his froggy friend`,
-      action: `Help me write a poem about a butterfly and his froggy friend`,
+      label: `a butterfly and his froggy friends`,
+      action: `Help me write a poem about a butterfly and his froggy friends.`,
     },
     {
       title: `Can you explain`,
-      label: 'how the weather cycle works?',
+      label: `how the weather cycle works?`,
       action: 'Can you explain how the weather cycle works?',
     },
   ];

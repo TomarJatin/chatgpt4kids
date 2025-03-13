@@ -16,9 +16,9 @@ interface SuggestedActionsProps {
 function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   const suggestedActions = [
     {
-      title: `What is an average day like`,
+      title: `What is life like`,
       label: 'for a dolphin in the ocean?',
-      action: 'What is an average day like for a dolphin in the ocean?',
+      action: 'What is life like for a dolphin in the ocean?',
     },
     {
       title: `Write code to`,

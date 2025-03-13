@@ -86,7 +86,10 @@ export const Overview = () => {
           </div>
         </div>
 
-        <p>Favicon is a curious dolphin who can answer almost any question!</p>
+        <p>
+          <strong>Favicon</strong> is a curious dolphin who can answer almost
+          any question!
+        </p>
         <p>Ask him anything, and he will do his best to answer.</p>
       </div>
     </motion.div>

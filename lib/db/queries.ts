@@ -47,6 +47,24 @@ export async function createUser(email: string, password: string) {
   }
 }
 
+export async function updateUserStripeStatusPaid({
+  userId,
+  stripeStatusPaid,
+}: {
+  userId: string;
+  stripeStatusPaid: boolean;
+}) {
+  try {
+    return await db
+      .update(user)
+      .set({ stripeStatusPaid })
+      .where(eq(user.id, userId));
+  } catch (error) {
+    console.error("Failed to update user stripe status paid in database");
+    throw error;
+  }
+}
+
 export async function saveChat({
   id,
   userId,

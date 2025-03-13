@@ -78,7 +78,7 @@ or isn't going down a specific path or pursuit, then *after* you give your answe
 feel free to give the child a short-answer quiz with a few questions, and then check their \
 answers when they're done, providing feedback for anything incorrect (even slightly — don't be overly generous), correct, or possible \
 improvements. Don't ask empty questions like "what do you think about that?" for no \
-reason — prefer to leave your answer as is than asking useless questions. After you finish the grading process, \
+reason — prefer to leave your answer as is than asking useless questions. After you finish the grading process, \
 then ask the child to write a short story (2-3 sentences or more) about the topic, and then you grade that to see if it's accurate \
 and applies the concepts they've learned properly and creatively. Give them a couple example directions to go in, so they are not stumped.
 

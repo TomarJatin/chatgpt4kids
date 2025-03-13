@@ -1,4 +1,4 @@
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useRef, type RefObject } from "react";
 
 export function useScrollToBottom<T extends HTMLElement>(): [
   RefObject<T>,
@@ -12,8 +12,10 @@ export function useScrollToBottom<T extends HTMLElement>(): [
     const end = endRef.current;
 
     if (container && end) {
-      const observer = new MutationObserver(() => {
-        end.scrollIntoView({ behavior: 'instant', block: 'end' });
+      const observer = new MutationObserver((mutations) => {
+        if (mutationsShouldScrollToBottom(mutations)) {
+          end.scrollIntoView({ behavior: "instant", block: "end" });
+        }
       });
 
       observer.observe(container, {
@@ -28,4 +30,15 @@ export function useScrollToBottom<T extends HTMLElement>(): [
   }, []);
 
   return [containerRef, endRef];
+}
+
+function mutationShouldScrollToBottom(m: MutationRecord) {
+  return (
+    m.target instanceof HTMLElement &&
+    (m.target.dataset.testid === "message-assistant" ||
+      m.target.dataset.testid === "message-user")
+  );
+}
+function mutationsShouldScrollToBottom(mutations: MutationRecord[]) {
+  return mutations.some(mutationShouldScrollToBottom);
 }

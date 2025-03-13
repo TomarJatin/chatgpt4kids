@@ -15,7 +15,7 @@ export const config = {
      */
     {
       source:
-        '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|pricing|api/stripe/webhook).*)',
+        '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|fonts/|pricing|api/stripe/webhook).*)',
     },
   ],
 }

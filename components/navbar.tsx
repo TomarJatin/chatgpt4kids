@@ -40,7 +40,7 @@ export function Navbar() {
             <Link href="/login">Log in</Link>
           </Button>
           <Button asChild>
-            <Link href="/register">Get Started</Link>
+            <Link href="#pricing">Get Started</Link>
           </Button>
         </nav>
 

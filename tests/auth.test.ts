@@ -1,6 +1,7 @@
 import { generateId } from 'ai';
 import { getUnixTime } from 'date-fns';
 import { test, expect, Page } from '@playwright/test';
+import { URL_NEW_CHAT } from '@/lib/urls';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -52,13 +53,13 @@ test.describe
     });
 
     test('redirect to login page when unauthenticated', async ({ page }) => {
-      await page.goto('/');
+      await page.goto(URL_NEW_CHAT);
       await expect(page.getByRole('heading')).toContainText('Sign In');
     });
 
     test('register a test account', async ({ page }) => {
       await authPage.register(testEmail, testPassword);
-      await expect(page).toHaveURL('/');
+      await expect(page).toHaveURL(URL_NEW_CHAT);
       await authPage.expectToastToContain('Account created successfully!');
     });
 
@@ -70,8 +71,8 @@ test.describe
     test('log into account', async ({ page }) => {
       await authPage.login(testEmail, testPassword);
 
-      await page.waitForURL('/');
-      await expect(page).toHaveURL('/');
+      await page.waitForURL(URL_NEW_CHAT);
+      await expect(page).toHaveURL(URL_NEW_CHAT);
       await expect(page.getByPlaceholder('Send a message...')).toBeVisible();
     });
   });

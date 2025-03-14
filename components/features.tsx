@@ -1,0 +1,73 @@
+import { Sparkles, Folder, ListChecks, Users } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+export function Features() {
+  const features = [
+    {
+      icon: <Sparkles className="size-10 md:size-12 text-primary" />,
+      title: "Customized to your child's age",
+      description:
+        "We offer 3 modes: ages 4–6, 7–10, and 11–14 — each with their own customized reading level, age-appropriate content moderation, and level of difficulty to help your children learn and grow!",
+    },
+    {
+      icon: <Folder className="size-10 md:size-12 text-primary" />,
+      title: "Daily Usage Report",
+      description:
+        "Get insights into what your child is learning, their favorite topics, and time spent exploring.",
+    },
+    {
+      icon: <ListChecks className="size-10 md:size-12 text-primary" />,
+      title: "Custom Rules",
+      description:
+        "Set your own guidelines to shape how the AI responds, ensuring a personalized and safe experience for your child.",
+    },
+    {
+      icon: <Users className="size-10 md:size-12 text-primary" />,
+      title: "Supports up to 3 children under one subscription",
+      description: "Each child has their own account and learning profile.",
+    },
+  ];
+
+  return (
+    <section id="features" className="py-12 md:py-24 bg-muted/30">
+      <div className="container px-4 md:px-6">
+        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+          <div className="space-y-2">
+            <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm text-primary-foreground">
+              Features
+            </div>
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+              Built for Children, Controlled by Parents
+            </h2>
+            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+              We use the latest & greatest models from companies like OpenAI and
+              Anthropic (Claude), but instead we build it from the ground up to
+              be safe and customized for children.
+            </p>
+          </div>
+        </div>
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8 mt-12">
+          {features.map((feature, index) => (
+            <Card key={index} className="border-2 border-muted">
+              <CardHeader>
+                <div className="mb-2">{feature.icon}</div>
+                <CardTitle className="text-xl">{feature.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-base">
+                  {feature.description}
+                </CardDescription>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

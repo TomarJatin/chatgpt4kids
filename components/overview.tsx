@@ -68,7 +68,7 @@ export const Overview = () => {
           <div className="bg-white rounded-full m-2 p-2 size-[120px] flex flex-row justify-center items-center border-2 border-gray-300">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              alt="Favicon Mascott"
+              alt="Favicon Mascot"
               // src="https://img.freepik.com/premium-vector/dolphin-vector-icon-dolphin-illustration-sign-dolphin-symbol-logo_186686-759.jpg"
               // src="https://cdn-icons-png.flaticon.com/512/427/427463.png"
               src="/static/dolphin-right.png"

@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { chatModels } from '@/lib/ai/models';
 import { expect, Page } from '@playwright/test';
+import { URL_NEW_CHAT } from '@/lib/urls';
 
 export class ChatPage {
   constructor(private page: Page) {}
@@ -19,7 +20,7 @@ export class ChatPage {
   }
 
   async createNewChat() {
-    await this.page.goto('/');
+    await this.page.goto(URL_NEW_CHAT);
   }
 
   public getCurrentURL(): string {

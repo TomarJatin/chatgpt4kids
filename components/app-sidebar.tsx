@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { URL_NEW_CHAT } from '@/lib/urls';
 
 export function AppSidebar({ user }: { user: User | undefined }) {
   const router = useRouter();
@@ -28,7 +29,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
         <SidebarMenu>
           <div className="flex flex-row justify-between items-center">
             <Link
-              href="/"
+              href={URL_NEW_CHAT}
               onClick={() => {
                 setOpenMobile(false);
               }}
@@ -50,7 +51,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                   className="p-2 h-fit"
                   onClick={() => {
                     setOpenMobile(false);
-                    router.push('/');
+                    router.push(URL_NEW_CHAT);
                     router.refresh();
                   }}
                 >

@@ -1,5 +1,7 @@
 import type { NextAuthConfig } from 'next-auth';
 
+import { URL_NEW_CHAT } from '@/lib/urls';
+
 export const authConfig: NextAuthConfig = {
   pages: {
     signIn: '/login',
@@ -12,12 +14,15 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnChat = nextUrl.pathname.startsWith('/');
+      console.log(`next-auth: loggedIn=${isLoggedIn ? '1' : '0'} | '${nextUrl.toString()}'`);
+
+      const isOnChat = nextUrl.pathname.startsWith(URL_NEW_CHAT);
       const isOnRegister = nextUrl.pathname.startsWith('/register');
       const isOnLogin = nextUrl.pathname.startsWith('/login');
 
       if (isLoggedIn && (isOnLogin || isOnRegister)) {
-        return Response.redirect(new URL('/', nextUrl as unknown as URL));
+        console.log(`next-auth: redirecting to ${URL_NEW_CHAT} 1`);
+        return Response.redirect(new URL(URL_NEW_CHAT, nextUrl as unknown as URL));
       }
 
       if (isOnRegister || isOnLogin) {
@@ -29,9 +34,10 @@ export const authConfig: NextAuthConfig = {
         return false; // Redirect unauthenticated users to login page
       }
 
-      if (isLoggedIn) {
-        return Response.redirect(new URL('/', nextUrl as unknown as URL));
-      }
+      // if (isLoggedIn) {
+      //   console.log(`next-auth: redirecting to ${URL_NEW_CHAT} 2`);
+      //   return Response.redirect(new URL(URL_NEW_CHAT, nextUrl as unknown as URL));
+      // }
 
       return true;
     },

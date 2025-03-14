@@ -49,6 +49,7 @@ import {
 import type { Chat } from '@/lib/db/schema';
 import { fetcher } from '@/lib/utils';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
+import { URL_NEW_CHAT } from '@/lib/urls';
 
 type GroupedChats = {
   today: Chat[];
@@ -192,7 +193,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     setShowDeleteDialog(false);
 
     if (deleteId === id) {
-      router.push('/');
+      router.push(URL_NEW_CHAT);
     }
   };
 

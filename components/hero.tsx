@@ -33,9 +33,9 @@ export function Hero() {
                 <p className="max-w-[600px] text-muted-foreground md:text-xl mt-0 pt-0">
                   <span className="font-semibold">
                     That&apos;s why we created{" "}
-                    <span className="text-primary">
-                      ChatGP<span className="tracking-[-0.055em]">T </span>fo
-                      <span className="tracking-[-0.055em]">r </span>Kids
+                    <span className="tracking-[-0.048em] font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent pe-[1px]">
+                      ChatGP<span className="tracking-[-0.07em]">T </span>fo
+                      <span className="tracking-[-0.07em]">r </span>Kids
                     </span>
                   </span>{" "}
                   — a customized model for answering questions, sparking

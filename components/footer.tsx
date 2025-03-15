@@ -8,7 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
-              <span className="text-xl tracking-tighter font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              <span className="text-xl tracking-tighter font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent px-0.5">
                 ChatGP<span className="tracking-[-0.07em]">T </span>fo
                 <span className="tracking-[-0.07em]">r </span>Kids
               </span>

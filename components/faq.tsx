@@ -11,7 +11,7 @@ export function FAQ() {
       question:
         "Do any other companies (like OpenAI, Anthropic/Claude, etc) store and have access to my child's data?",
       answer: `Nope, never!
-      While we use AI models from companies like OpenAI etc., our service agreement with them specifically does not permit them to save or store the messages. Only ChatGPT4Kids ever has access to messages so that you can review them.`,
+      While we use AI models from companies like OpenAI etc., our service agreement with them specifically does not permit them to save or store the messages. Only ChatGPT for Kids ever has access to messages so that you can review them.`,
     },
     {
       question:
@@ -31,7 +31,7 @@ export function FAQ() {
         "Your child's privacy is our top priority. Only authorized parents/guardians have access to their child's information and conversation history through the parent dashboard. We implement strict data security measures and never share or sell your child's data to third parties.",
     },
     {
-      question: "Is ChatGPT4Kids perfect and 100% foolproof?",
+      question: "Is ChatGPT for Kids perfect and 100% foolproof?",
       answer:
         "While we've implemented comprehensive safety measures and content moderation, no technology system is 100% foolproof. We continuously improve our safeguards and recommend parent supervision, especially for younger children. Our custom rules feature allows parents to tailor the experience based on their family's needs and values.",
     },
@@ -49,7 +49,7 @@ export function FAQ() {
               Frequently Asked Questions
             </h2>
             <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Get answers to common questions about ChatGPT4Kids
+              Get answers to common questions about ChatGPT for Kids
             </p>
           </div>
         </div>

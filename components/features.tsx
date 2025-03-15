@@ -12,8 +12,17 @@ export function Features() {
     {
       icon: <Sparkles className="size-10 md:size-12 text-primary" />,
       title: "Customized to your child's age",
-      description:
-        "We offer 3 modes: ages 4–6, 7–10, and 11–14 — each with their own customized reading level, age-appropriate content moderation, and level of difficulty to help your children learn and grow!",
+      description: (
+        <span>
+          We offer pre-defined modes for all age ranges:{" "}
+          <span className="whitespace-nowrap">3-5</span>,{" "}
+          <span className="whitespace-nowrap">6-9</span>,{" "}
+          <span className="whitespace-nowrap">10-13</span>, and{" "}
+          <span className="whitespace-nowrap">14+</span> — each with their own
+          customized reading level, age-appropriate content moderation, and
+          level of difficulty to help your children learn and grow!
+        </span>
+      ),
     },
     {
       icon: <Folder className="size-10 md:size-12 text-primary" />,

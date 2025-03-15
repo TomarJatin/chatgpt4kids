@@ -8,9 +8,9 @@ import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 
 const seo = {
-  title: `ChatGPT4Kids | AI with Parental Controls, for all ages!`,
-  description: `ChatGPT4Kids is a safe, secure AI chatbot built specifically for kids aged 3+, with built-in parental controls and monitoring. It's a great way to create a safe and secure environment for your child to begin a relationship with AI, to interact, learn, and grow.`,
-  keywords: `chatgpt for kids, chatgpt kids, kids chatgpt, safe chatgpt, ai for kids, safe ai for kids, kids llm, llm for kids, ai chatbot, parental controls, kids, all ages`,
+  title: `ChatGPT for Kids | AI for all ages!`,
+  description: `ChatGPT for Kids is a safe, secure AI chatbot built specifically for kids aged 3+, with built-in parental controls and monitoring. It's the best way to create a safe and secure environment for your child to begin a relationship with AI, to interact, learn, and grow.`,
+  keywords: `chatgpt for kids, chatgpt kids, kids chatgpt, chatgpt4kids, safe chatgpt, ai for kids, safe ai for kids, kids llm, llm for kids, ai chatbot, parental controls, kids, all ages`,
   image: undefined,
 };
 

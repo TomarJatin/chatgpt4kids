@@ -36,7 +36,12 @@ export default function Page() {
       });
     } else if (state.status === 'success') {
       setIsSuccessful(true);
-      router.refresh();
+      const callbackUrl = new URL(window.location.href).searchParams.get('callbackUrl');
+      if (callbackUrl) {
+        router.push(callbackUrl);
+      } else {
+        router.refresh();
+      }
     }
   }, [state.status, router]);
 

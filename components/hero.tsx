@@ -33,7 +33,10 @@ export function Hero() {
                 <p className="max-w-[600px] text-muted-foreground md:text-xl mt-0 pt-0">
                   <span className="font-semibold">
                     That&apos;s why we created{" "}
-                    <span className="text-primary">ChatGPT For Kids</span>
+                    <span className="text-primary">
+                      ChatGP<span className="tracking-[-0.055em]">T </span>fo
+                      <span className="tracking-[-0.055em]">r </span>Kids
+                    </span>
                   </span>{" "}
                   — a customized model for answering questions, sparking
                   curiosity, and challenging young minds to learn more deeply,
@@ -70,7 +73,7 @@ export function Hero() {
               <div className="relative rounded-lg shadow-xl">
                 <Image
                   className="flex size-full object-cover rounded-lg overflow-hidden"
-                  alt="ChatGPT4Kids interface showing a child-friendly AI conversation"
+                  alt="ChatGPT for Kids interface showing a child-friendly AI conversation"
                   unoptimized // animated images are not optimizable by sharp/`next/image`
                   src={chatgpt4kidsDemoAnimation}
                   width={1200}
@@ -87,7 +90,7 @@ export function Hero() {
                   className="text-lg font-semibold"
                   style={{ textShadow: "0 0 8px hsla(var(--primary) / 0.3)" }}
                 >
-                  Safe AI learning for ages 4-14
+                  Safe AI learning for ages 3-14+
                 </p>
                 <p
                   className="text-sm opacity-80"

@@ -20,6 +20,7 @@ export default async function Layout({
     <>
       <Script
         src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"
+        // this could slow things down, is it necessary?
         strategy="beforeInteractive"
       />
       <SidebarProvider defaultOpen={!isCollapsed}>

@@ -8,12 +8,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Link from "next/link";
 
 export function Pricing() {
   const plans = [
     {
-      name: "Basic",
-      price: "$25",
+      api_plan_name: "basic",
+      name: (
+        <span>
+          <span className="text-[28px]">Basic</span>{" "}
+          <span className="font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+            + <span className="-tracking-wider">3-day free trial</span>
+          </span>
+        </span>
+      ),
+      price: "$24",
       period: "/month",
       description: "Perfect for families just getting started with AI learning",
       features: [
@@ -23,12 +32,20 @@ export function Pricing() {
         "Weekly usage reports",
         "Email support",
       ],
-      cta: "Start Monthly Plan",
+      cta: <span>Start 3-day free trial!</span>,
       popular: false,
     },
     {
-      name: "Pro",
-      price: "$149.99",
+      api_plan_name: "elite",
+      name: (
+        <span>
+          <span className="text-[28px]">Elite</span>{" "}
+          <span className="font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+            + <span className="-tracking-wider">3-day free trial</span>
+          </span>
+        </span>
+      ),
+      price: "$149",
       period: "/year",
       description:
         "Our most popular plan for families committed to AI learning",
@@ -41,7 +58,7 @@ export function Pricing() {
         "Personalized learning paths",
         "Save over 50% compared to monthly",
       ],
-      cta: "Start Annual Plan",
+      cta: <span>Start Annual Plan (+ 3-day free trial)</span>,
       popular: true,
     },
   ];
@@ -66,7 +83,7 @@ export function Pricing() {
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8 mt-8">
           {plans.map((plan) => (
             <Card
-              key={plan.name}
+              key={plan.api_plan_name}
               className={`flex flex-col ${plan.popular ? "border-primary shadow-lg" : "border-border"}`}
             >
               {plan.popular && (
@@ -100,15 +117,18 @@ export function Pricing() {
                 <Button
                   className="w-full"
                   variant={plan.popular ? "default" : "outline"}
+                  asChild
                 >
-                  {plan.cta}
+                  <Link href={`/buy?plan=${plan.api_plan_name}`}>
+                    {plan.cta}
+                  </Link>
                 </Button>
               </CardFooter>
             </Card>
           ))}
         </div>
         <div className="mt-8 text-center text-sm text-muted-foreground">
-          All plans come with a 14-day money-back guarantee. No questions asked.
+          All plans come with a 30-day money-back guarantee. No questions asked.
         </div>
       </div>
     </section>

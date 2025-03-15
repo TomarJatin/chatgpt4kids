@@ -13,8 +13,9 @@ export function Navbar() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-              ChatGPT4Kids
+            <span className="tracking-[-0.048em] text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              ChatGP<span className="tracking-[-0.07em]">T </span>fo
+              <span className="tracking-[-0.07em]">r </span>Kids
             </span>
           </Link>
         </div>

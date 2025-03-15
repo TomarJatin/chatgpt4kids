@@ -1,11 +1,11 @@
-import type { NextAuthConfig } from 'next-auth';
+import type { NextAuthConfig } from "next-auth";
 
-import { URL_NEW_CHAT } from '@/lib/urls';
+import { URL_NEW_CHAT } from "@/lib/urls";
 
 export const authConfig: NextAuthConfig = {
   pages: {
-    signIn: '/login',
-    newUser: '/',
+    signIn: "/register",
+    newUser: "/",
   },
   providers: [
     // added later in auth.ts since it requires bcrypt which is only compatible with Node.js
@@ -14,29 +14,41 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      console.log(`next-auth: loggedIn=${isLoggedIn ? '1' : '0'} | '${nextUrl.toString()}'`);
+      console.log(
+        `next-auth: loggedIn=${isLoggedIn ? "1" : "0"} | '${nextUrl.toString()}'`
+      );
 
-      const isOnChat = nextUrl.pathname.startsWith(URL_NEW_CHAT);
-      const isOnRegister = nextUrl.pathname.startsWith('/register');
-      const isOnLogin = nextUrl.pathname.startsWith('/login');
-
-      if (isLoggedIn && (isOnLogin || isOnRegister)) {
-        console.log(`next-auth: redirecting to ${URL_NEW_CHAT} 1`);
-        return Response.redirect(new URL(URL_NEW_CHAT, nextUrl as unknown as URL));
+      if (nextUrl.pathname === "/") {
+        return true;
       }
 
-      if (isOnRegister || isOnLogin) {
+      const isOnRegister = nextUrl.pathname.startsWith("/register");
+      const isOnLogin = nextUrl.pathname.startsWith("/login");
+      const isAuthPage = isOnRegister || isOnLogin;
+
+      if (isLoggedIn && isAuthPage) {
+        console.log(`next-auth: redirecting to ${URL_NEW_CHAT} 1`);
+        const callbackUrl = nextUrl.searchParams.get("callbackUrl");
+        if (callbackUrl) {
+          return Response.redirect(new URL(callbackUrl, nextUrl));
+        }
+        return Response.redirect(new URL(URL_NEW_CHAT, nextUrl));
+      }
+
+      if (isAuthPage) {
         return true; // Always allow access to register and login pages
       }
 
-      if (isOnChat) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      }
+      if (isLoggedIn) return true;
+
+      // if (nextUrl.pathname.startsWith('/buy')) {
+      // }
+
+      return false; // Redirect unauthenticated users to login page
 
       // if (isLoggedIn) {
       //   console.log(`next-auth: redirecting to ${URL_NEW_CHAT} 2`);
-      //   return Response.redirect(new URL(URL_NEW_CHAT, nextUrl as unknown as URL));
+      //   return Response.redirect(new URL(URL_NEW_CHAT, nextUrl));
       // }
 
       return true;

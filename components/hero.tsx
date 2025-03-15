@@ -68,10 +68,10 @@ export function Hero() {
           <div className="flex flex-col items-center justify-center">
             <div className="flex flex-col items-start justify-center">
               <div className="relative rounded-lg shadow-xl">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <Image
                   className="flex size-full object-cover rounded-lg overflow-hidden"
                   alt="ChatGPT4Kids interface showing a child-friendly AI conversation"
+                  unoptimized // animated images are not optimizable by sharp/`next/image`
                   src={chatgpt4kidsDemoAnimation}
                   width={1200}
                   height={964}

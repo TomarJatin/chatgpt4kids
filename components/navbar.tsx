@@ -81,10 +81,10 @@ export function Navbar() {
             </Link>
             <div className="flex flex-col gap-2 mt-2">
               <Button asChild variant="outline">
-                <Link href="#">Log in</Link>
+                <Link href="/login">Log in</Link>
               </Button>
               <Button asChild>
-                <Link href="#">Get Started</Link>
+                <Link href="#pricing">Get Started</Link>
               </Button>
             </div>
           </nav>

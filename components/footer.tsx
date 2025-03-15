@@ -18,21 +18,21 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <Link
-                href="#"
+                href="https://www.facebook.com/profile.php?id=61574143499847"
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Facebook className="size-5" />
                 <span className="sr-only">Facebook</span>
               </Link>
               <Link
-                href="#"
+                href="https://x.com/chatgpt4kids"
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Twitter className="size-5" />
                 <span className="sr-only">Twitter</span>
               </Link>
               <Link
-                href="#"
+                href="https://www.instagram.com/chatgpt4kids"
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Instagram className="size-5" />

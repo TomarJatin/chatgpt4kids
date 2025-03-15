@@ -32,7 +32,7 @@ export function Pricing() {
         "Weekly usage reports",
         "Email support",
       ],
-      cta: <span>Start 3-day free trial!</span>,
+      cta: <span>Start 3-day free trial</span>,
       popular: false,
     },
     {

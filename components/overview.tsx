@@ -1,7 +1,10 @@
-import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { motion } from "framer-motion";
+import Link from "next/link";
 
-import { MessageIcon, VercelIcon } from './icons';
+import { MessageIcon, VercelIcon } from "./icons";
+
+import happyFavicon from "@/static_assets/happy_favicon.png";
+import Image from "next/image";
 
 /*
 export const Overview = () => {
@@ -66,17 +69,16 @@ export const Overview = () => {
       <div className="rounded-xl p-6 flex flex-col gap-2 leading-relaxed text-center max-w-xl">
         <div className="flex flex-row justify-center items-center m-4">
           <div className="bg-white rounded-full m-2 p-2 size-[120px] flex flex-row justify-center items-center border-2 border-gray-300">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               alt="Favicon Mascot"
               // src="https://img.freepik.com/premium-vector/dolphin-vector-icon-dolphin-illustration-sign-dolphin-symbol-logo_186686-759.jpg"
               // src="https://cdn-icons-png.flaticon.com/512/427/427463.png"
-              src="/static/dolphin-right.png"
-              className="size-[90px] "
+              src={happyFavicon}
+              className="size-[100px] object-contain"
               style={{
-                width: "90px",
+                width: "100px",
                 // transform: "scaleX(-1) translateX(-5px)",
-                transform: "translateX(5px)",
+                // transform: "translateX(0px)",
               }}
               referrerPolicy="no-referrer"
               loading="eager"

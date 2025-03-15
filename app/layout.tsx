@@ -5,6 +5,8 @@ import { Toaster } from 'sonner';
 
 import { ThemeProvider } from '@/components/theme-provider';
 
+import happyFavicon from '@/static_assets/happy_favicon.png';
+
 import './globals.css';
 
 const seo = {
@@ -15,8 +17,8 @@ const seo = {
 };
 
 const largeIcon: IconDescriptor = {
-  url: '/static/dolphin-right.png',
-  sizes: '512x512',
+  url: happyFavicon.src,
+  sizes: `${happyFavicon.width}x${happyFavicon.height}`,
   type: 'image/png',
 };
 

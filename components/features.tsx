@@ -46,7 +46,7 @@ export function Features() {
               Built for Children, Controlled by Parents
             </h2>
             <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              We use the latest & greatest models from companies like OpenAI and
+              We use the latest &amp; greatest models from companies like OpenAI and
               Anthropic (Claude), but instead we build it from the ground up to
               be safe and customized for children.
             </p>
@@ -54,7 +54,10 @@ export function Features() {
         </div>
         <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:gap-8 mt-12">
           {features.map((feature, index) => (
-            <Card key={index} className="border-2 border-muted">
+            <Card
+              key={index}
+              className="border-2 border-muted relative shadow-md min-h-[300px] pb-12"
+            >
               <CardHeader>
                 <div className="mb-2">{feature.icon}</div>
                 <CardTitle className="text-xl">{feature.title}</CardTitle>
@@ -64,6 +67,11 @@ export function Features() {
                   {feature.description}
                 </CardDescription>
               </CardContent>
+
+  
+              <div className="absolute bottom-3 left-3 bg-secondary text-secondary-foreground text-xs font-medium uppercase tracking-wider py-1 px-2 rounded shadow-sm">
+                Coming Soon
+              </div>
             </Card>
           ))}
         </div>

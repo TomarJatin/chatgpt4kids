@@ -47,7 +47,7 @@ export async function getUserById(id: string): Promise<User> {
     }
     return row;
   } catch (error) {
-    console.error('Failed to get user from database');
+    console.error('Failed to get user by id from database');
     throw error;
   }
 }

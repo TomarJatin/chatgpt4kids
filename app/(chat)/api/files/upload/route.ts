@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { auth } from '@/app/(auth)/auth';
+import { getUserById } from '@/lib/db/queries';
 
 // Use Blob instead of File since File is not available in Node.js environment
 const FileSchema = z.object({
@@ -20,8 +21,13 @@ const FileSchema = z.object({
 export async function POST(request: Request) {
   const session = await auth();
 
-  if (!session) {
+  if (!session || !session.user || !session.user.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { stripeStatusPaid } = await getUserById(session.user.id);
+  if (!stripeStatusPaid) {
+    return new Response("Stripe subscription required", { status: 401 });
   }
 
   if (request.body === null) {

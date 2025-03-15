@@ -3,6 +3,7 @@ import { ArtifactKind } from '@/components/artifact';
 import {
   deleteDocumentsByIdAfterTimestamp,
   getDocumentsById,
+  getUserById,
   saveDocument,
 } from '@/lib/db/queries';
 
@@ -16,8 +17,13 @@ export async function GET(request: Request) {
 
   const session = await auth();
 
-  if (!session || !session.user) {
+  if (!session || !session.user || !session.user.id) {
     return new Response('Unauthorized', { status: 401 });
+  }
+
+  const { stripeStatusPaid } = await getUserById(session.user.id);
+  if (!stripeStatusPaid) {
+    return new Response("Stripe subscription required", { status: 401 });
   }
 
   const documents = await getDocumentsById({ id });

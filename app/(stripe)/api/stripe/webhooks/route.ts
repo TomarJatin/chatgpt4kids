@@ -47,8 +47,7 @@ export async function POST(req: Request) {
       // Note: ignore `.created`, becuase they will have a status of 'incomplete', which is not useful for us to determine paid status.
       // as update `.updated` will always immediately follow `.created`.
       //
-      // case "customer.subscription.created":
-      //
+      case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted": {
         await handleSubscriptionStatusChange(event.data.object);
@@ -82,6 +81,6 @@ async function handleSubscriptionStatusChange(data: Stripe.Subscription) {
 
   await updateUserStripeStatusPaid({
     userId: c4k_user_id,
-    stripeStatusPaid: status === "active",
+    stripeStatusPaid: status === "active" || status === "trialing",
   });
 }

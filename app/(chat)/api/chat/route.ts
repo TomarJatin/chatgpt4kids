@@ -10,6 +10,7 @@ import {
   deleteChatById,
   getChatById,
   saveChat,
+  getUserById,
   saveMessages,
 } from '@/lib/db/queries';
 import {
@@ -44,6 +45,11 @@ export async function POST(request: Request) {
 
     if (!session || !session.user || !session.user.id) {
       return new Response('Unauthorized', { status: 401 });
+    }
+
+    const { stripeStatusPaid } = await getUserById(session.user.id);
+    if (!stripeStatusPaid) {
+      return new Response("Stripe subscription required", { status: 401 });
     }
 
     const userMessage = getMostRecentUserMessage(messages);

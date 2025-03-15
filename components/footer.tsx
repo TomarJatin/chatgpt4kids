@@ -19,7 +19,7 @@ export function Footer() {
             </p>
             <div className="flex gap-4">
               <Link
-                href="https://www.facebook.com/profile.php?id=61574143499847"
+                href="https://www.facebook.com/people/Chatgpt-for-Kids/61574143499847/"
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Facebook className="size-5" />
@@ -33,7 +33,7 @@ export function Footer() {
                 <span className="sr-only">Twitter</span>
               </Link>
               <Link
-                href="https://www.instagram.com/chatgpt4kids"
+                href="https://www.instagram.com/chatgpt4kids/"
                 className="text-muted-foreground hover:text-foreground"
               >
                 <Instagram className="size-5" />

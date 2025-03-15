@@ -18,8 +18,12 @@ export const revalidate = 0;
 export const dynamic = "force-dynamic";
 export const fetchCache = "only-no-store";
 
-const PRICE_ID_BASIC_MONTHLY = "price_1R2jjTENa6u0U2g1hYEAiKcz";
-const PRICE_ID_ELITE_YEARLY = "price_1R2jk3ENa6u0U2g1dXcik2c7";
+// test prices:
+// const PRICE_ID_BASIC_MONTHLY = "price_1R2jjTENa6u0U2g1hYEAiKcz";
+// const PRICE_ID_ELITE_YEARLY = "price_1R2jk3ENa6u0U2g1dXcik2c7";
+// live:
+const PRICE_ID_BASIC_MONTHLY = "price_1R2m4FENa6u0U2g1yPjo50Lr";
+const PRICE_ID_ELITE_YEARLY = "price_1R2m4FENa6u0U2g1658GrdQW";
 
 export async function GET(request: Request) {
   const authSession = await auth();

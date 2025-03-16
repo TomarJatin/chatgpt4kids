@@ -5,6 +5,8 @@ import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 
+import { match } from 'ts-pattern';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -44,9 +46,23 @@ export function SidebarUserNav({ user }: { user: User }) {
           >
             <DropdownMenuItem
               className="cursor-pointer"
-              onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              // onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onSelect={(ev) => {
+                // since this is a multi-toggle, don't dismiss the dropdown.
+                ev.preventDefault();
+
+                setTheme(
+                  match(theme)
+                    // go in a circle:
+                    .with('system', () => 'light')
+                    .with('light', () => 'dark')
+                    .with('dark', () => 'system')
+                    // or if we don't recognize the theme, go back to 'system'.
+                    .otherwise(() => 'system'),
+                );
+              }}
             >
-              {`Toggle ${theme === 'light' ? 'dark' : 'light'} mode`}
+              {`Dark mode (${theme === 'system' ? 'auto' : theme})`}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

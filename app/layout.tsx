@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import type { IconDescriptor } from 'next/dist/lib/metadata/types/metadata-types';
 
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { Toaster } from 'sonner';
 
 import { ThemeProvider } from '@/components/theme-provider';
@@ -149,6 +150,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
+        <VercelAnalytics />
         <PostHogProvider>
           <ThemeProvider
             attribute="class"

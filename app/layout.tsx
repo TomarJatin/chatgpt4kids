@@ -7,6 +7,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 
 import happyFavicon from '@/static_assets/happy_favicon.png';
 
+import { PostHogProvider } from './provider-posthog';
+
 import './globals.css';
 
 const seo = {
@@ -107,15 +109,17 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Toaster position="top-center" />
-          {children}
-        </ThemeProvider>
+        <PostHogProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster position="top-center" />
+            {children}
+          </ThemeProvider>
+        </PostHogProvider>
       </body>
     </html>
   );

@@ -85,7 +85,9 @@ export function Navbar() {
                 <Link href="/login">Log in</Link>
               </Button>
               <Button asChild>
-                <Link href="#pricing">Get Started</Link>
+                <Link href="#pricing" onClick={() => setIsMenuOpen(false)}>
+                  Get Started
+                </Link>
               </Button>
             </div>
           </nav>

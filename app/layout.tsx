@@ -5,7 +5,7 @@ import { Toaster } from 'sonner';
 
 import { ThemeProvider } from '@/components/theme-provider';
 
-import happyFavicon from '@/static_assets/happy_favicon.png';
+import happyFavicon from '@/static_assets/happy_favicon_square.png';
 
 import { PostHogProvider } from './provider-posthog';
 
@@ -15,30 +15,58 @@ const seo = {
   title: `ChatGPT for Kids | AI for all ages!`,
   description: `ChatGPT for Kids is a safe, secure AI chatbot built specifically for kids aged 3+, with built-in parental controls and monitoring. It's the best way to create a safe and secure environment for your child to begin a relationship with AI, to interact, learn, and grow.`,
   keywords: `chatgpt for kids, chatgpt kids, kids chatgpt, chatgpt4kids, safe chatgpt, ai for kids, safe ai for kids, kids llm, llm for kids, ai chatbot, parental controls, kids, all ages`,
-  image: undefined,
+  image: happyFavicon.src,
 };
 
 const largeIcon: IconDescriptor = {
+  rel: 'icon',
   url: happyFavicon.src,
-  sizes: `${happyFavicon.width}x${happyFavicon.height}`,
   type: 'image/png',
+  sizes: `${happyFavicon.width}x${happyFavicon.height}`,
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://chatgpt4kids.com'),
   icons: {
-    icon: largeIcon,
-    apple: largeIcon,
+    // this results in an undesirable order (of the <meta> tags)
+    // icon: largeIcon,
+
+    // for some reason, not working:
+    // apple: largeIcon,
+
+    other: [
+      {
+        rel: 'icon',
+        url: '/favicon.ico',
+        type: 'image/x-icon',
+        // Note:
+        // $ identify public/favicon.ico
+        // app/favicon.ico[0] ICO 16x16 16x16+0+0 8-bit sRGB 0.000u 0:00.005
+        // app/favicon.ico[1] ICO 32x32 32x32+0+0 8-bit sRGB 0.000u 0:00.005
+        // app/favicon.ico[2] ICO 48x48 48x48+0+0 8-bit sRGB 0.000u 0:00.005
+        // app/favicon.ico[3] PNG 256x256 256x256+0+0 8-bit sRGB 50895B 0.000u 0:00.001
+        sizes: '16x16 32x32 48x48 256x256',
+      },
+      largeIcon,
+      {
+        rel: 'apple-touch-icon',
+        url: happyFavicon.src,
+        sizes: largeIcon.sizes,
+
+        // "type" is not needed, apple asks for a PNG unconditionally:
+        // https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html
+        // type: largeIcon.type,
+      },
+    ],
   },
-  // viewport: 'width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no',
   title: seo.title,
   description: seo.description,
   keywords: seo.keywords,
   twitter: {
     title: seo.title,
     description: seo.description,
-    creator: '@TODO',
-    site: '@TODO',
+    creator: '@chatgpt4kids',
+    site: '@chatgpt4kids',
     ...(seo.image
       ? {
           card: 'summary_large_image',

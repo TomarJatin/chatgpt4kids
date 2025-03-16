@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { MessageIcon, VercelIcon } from "./icons";
 
-import happyFavicon from "@/static_assets/happy_favicon.png";
+import happyFavicon from "@/static_assets/happy_favicon_square.png";
 import Image from "next/image";
 
 /*

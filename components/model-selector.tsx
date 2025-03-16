@@ -48,7 +48,7 @@ export function ModelSelector({
           <ChevronDownIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align="start" className="w-[350px] mx-2">
         {chatModels.map((chatModel) => {
           const { id } = chatModel;
 
@@ -73,7 +73,7 @@ export function ModelSelector({
               >
                 <div className="flex flex-col gap-1 items-start">
                   <div>{chatModel.name}</div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-muted-foreground text-left">
                     {chatModel.description}
                   </div>
                 </div>

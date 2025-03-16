@@ -8,6 +8,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import happyFavicon from '@/static_assets/happy_favicon_square.png';
 
 import { PostHogProvider } from './provider-posthog';
+import { ProviderProgressBar } from './provider-progress-bar';
 
 import './globals.css';
 
@@ -156,7 +157,7 @@ export default async function RootLayout({
             disableTransitionOnChange
           >
             <Toaster position="top-center" />
-            {children}
+            <ProviderProgressBar>{children}</ProviderProgressBar>
           </ThemeProvider>
         </PostHogProvider>
       </body>

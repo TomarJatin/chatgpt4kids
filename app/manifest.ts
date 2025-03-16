@@ -4,9 +4,14 @@
 import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
+  const name =
+    process.env.NODE_ENV === "development"
+      ? "(dev) ChatGPT for Kids"
+      : "ChatGPT for Kids";
+
   return {
-    name: "ChatGPT for Kids",
-    short_name: "ChatGPT for Kids",
+    name,
+    short_name: name,
     description:
       "A safe, secure AI chatbot specifically for kids aged 3+, with built-in parental controls and monitoring. It's the best way to create a safe and secure environment for your child to begin a relationship with AI, to interact, learn, and grow.",
 

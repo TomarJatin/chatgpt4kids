@@ -13,7 +13,7 @@ import './globals.css';
 
 const seo = {
   title: `ChatGPT for Kids | AI for all ages!`,
-  description: `ChatGPT for Kids is a safe, secure AI chatbot built specifically for kids aged 3+, with built-in parental controls and monitoring. It's the best way to create a safe and secure environment for your child to begin a relationship with AI, to interact, learn, and grow.`,
+  description: `A safe, secure AI chatbot specifically for kids aged 3+, with built-in parental controls and monitoring. It's the best way to create a safe and secure environment for your child to begin a relationship with AI, to interact, learn, and grow.`,
   keywords: `chatgpt for kids, chatgpt kids, kids chatgpt, chatgpt4kids, safe chatgpt, ai for kids, safe ai for kids, kids llm, llm for kids, ai chatbot, parental controls, kids, all ages`,
   image: happyFavicon.src,
 };
@@ -91,8 +91,19 @@ export const viewport: Viewport = {
   initialScale: 1,
   minimumScale: 1,
   maximumScale: 1,
-  viewportFit: 'cover',
+  viewportFit: 'contain',
   userScalable: false,
+
+  themeColor: [
+    {
+      media: '(prefers-color-scheme: light)',
+      color: 'hsl(0 0% 100%)',
+    },
+    {
+      media: '(prefers-color-scheme: dark)',
+      color: 'hsl(240deg 10% 3.92%)',
+    },
+  ],
 };
 
 const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)';

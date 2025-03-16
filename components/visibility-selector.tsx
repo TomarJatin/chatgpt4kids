@@ -91,7 +91,7 @@ export function VisibilitySelector({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start" className="min-w-[300px]">
+      <DropdownMenuContent align="start">
         {visibilities.map((visibility) => (
           <DropdownMenuItem
             key={visibility.id}

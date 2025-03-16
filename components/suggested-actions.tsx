@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { ChatRequestOptions, CreateMessage, Message } from 'ai';
 import { memo } from 'react';
+import { cn } from '@/lib/utils';
 
 interface SuggestedActionsProps {
   chatId: string;
@@ -49,7 +50,11 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
           exit={{ opacity: 0, y: 20 }}
           transition={{ delay: 0.05 * index }}
           key={`suggested-action-${suggestedAction.title}-${index}`}
-          className={index > 1 ? 'hidden sm:block' : 'block'}
+          className={cn(
+            index > 1 ? 'hidden sm:block' : 'block',
+            // don't let suggestions widen the chat window, instead truncate the text
+            'overflow-hidden',
+          )}
         >
           <Button
             variant="ghost"
@@ -63,8 +68,10 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
             }}
             className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
           >
-            <span className="font-medium">{suggestedAction.title}</span>
-            <span className="text-muted-foreground">
+            <span className="font-medium">
+              {suggestedAction.title}
+            </span>{" "}
+            <span className="text-muted-foreground truncate">
               {suggestedAction.label}
             </span>
           </Button>

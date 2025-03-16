@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { IconDescriptor } from 'next/dist/lib/metadata/types/metadata-types';
+import Script from 'next/script';
 
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { Toaster } from 'sonner';
@@ -110,8 +111,8 @@ export const viewport: Viewport = {
 
 const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)';
 const DARK_THEME_COLOR = 'hsl(240deg 10% 3.92%)';
-const THEME_COLOR_SCRIPT = `\
-(function() {
+
+function themeColorScriptFn() {
   var html = document.documentElement;
   var meta = document.querySelector('meta[name="theme-color"]');
   if (!meta) {
@@ -121,12 +122,13 @@ const THEME_COLOR_SCRIPT = `\
   }
   function updateThemeColor() {
     var isDark = html.classList.contains('dark');
-    meta.setAttribute('content', isDark ? '${DARK_THEME_COLOR}' : '${LIGHT_THEME_COLOR}');
+    meta?.setAttribute('content', isDark ? DARK_THEME_COLOR : LIGHT_THEME_COLOR);
   }
   var observer = new MutationObserver(updateThemeColor);
   observer.observe(html, { attributes: true, attributeFilter: ['class'] });
   updateThemeColor();
-})();`;
+}
+const THEME_COLOR_SCRIPT = `(${themeColorScriptFn.toString()})();`;
 
 export default async function RootLayout({
   children,
@@ -143,10 +145,11 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: THEME_COLOR_SCRIPT,
-          }}
+        <Script
+          // https://nextjs.org/docs/app/building-your-application/optimizing/scripts#inline-scripts
+          // > Warning: An id property must be assigned for inline scripts in order for Next.js to track and optimize the script.
+          id="root-theme-color-script"
+          dangerouslySetInnerHTML={{ __html: THEME_COLOR_SCRIPT }}
         />
       </head>
       <body className="antialiased">

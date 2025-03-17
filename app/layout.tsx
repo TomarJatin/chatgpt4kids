@@ -109,10 +109,10 @@ export const viewport: Viewport = {
   ],
 };
 
-const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)';
-const DARK_THEME_COLOR = 'hsl(240deg 10% 3.92%)';
-
 function themeColorScriptFn() {
+  const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)';
+  const DARK_THEME_COLOR = 'hsl(240deg 10% 3.92%)';
+
   var html = document.documentElement;
   var meta = document.querySelector('meta[name="theme-color"]');
   if (!meta) {

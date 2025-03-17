@@ -55,9 +55,9 @@ export function Features() {
               Built for Children, Controlled by Parents
             </h2>
             <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              We use the latest &amp; greatest models from companies like OpenAI and
-              Anthropic (Claude), but instead we build it from the ground up to
-              be safe and customized for children.
+              We use state-of-the-art models from companies like OpenAI and
+              Anthropic (Claude), but instead we&apos;ve built it from the
+              ground up to be safe and customized for children.
             </p>
           </div>
         </div>
@@ -77,10 +77,9 @@ export function Features() {
                 </CardDescription>
               </CardContent>
 
-  
-              <div className="absolute bottom-3 left-3 bg-secondary text-secondary-foreground text-xs font-medium uppercase tracking-wider py-1 px-2 rounded shadow-sm">
+              {/* <div className="absolute bottom-3 left-3 bg-secondary text-secondary-foreground text-xs font-medium uppercase tracking-wider py-1 px-2 rounded shadow-sm">
                 Coming Soon
-              </div>
+              </div> */}
             </Card>
           ))}
         </div>

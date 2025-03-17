@@ -44,6 +44,14 @@ export function SidebarUserNav({ user }: { user: User }) {
             side="top"
             className="w-[--radix-popper-anchor-width]"
           >
+            <DropdownMenuItem className="cursor-pointer" asChild>
+              <a
+                href="https://billing.stripe.com/p/login/00g6oY79beST46I9AA"
+                target="_blank"
+              >
+                Manage Subscription
+              </a>
+            </DropdownMenuItem>
             <DropdownMenuItem
               className="cursor-pointer"
               // onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}

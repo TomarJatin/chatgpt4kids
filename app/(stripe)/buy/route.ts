@@ -30,8 +30,16 @@ if (
   PRICE_ID_ELITE_YEARLY = "price_1R2lkCENa6u0U2g1IIXeEzYi";
 } else {
   // live:
-  PRICE_ID_BASIC_MONTHLY = "price_1R2m4FENa6u0U2g1yPjo50Lr";
-  PRICE_ID_ELITE_YEARLY = "price_1R2m4FENa6u0U2g1658GrdQW";
+
+  // (former: $24/mo)
+  // PRICE_ID_BASIC_MONTHLY = "price_1R2m4FENa6u0U2g1yPjo50Lr";
+  // (new: $9/mo)
+  PRICE_ID_BASIC_MONTHLY = "price_1R3YWcENa6u0U2g1wohdJj2f";
+
+  // (former: $149/year)
+  // PRICE_ID_ELITE_YEARLY = "price_1R2m4FENa6u0U2g1658GrdQW";
+  // (new: $55/year)
+  PRICE_ID_ELITE_YEARLY = "price_1R3YXPENa6u0U2g1kliD0EJ5";
 }
 
 export async function GET(request: Request) {

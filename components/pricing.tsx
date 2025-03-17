@@ -22,7 +22,14 @@ export function Pricing() {
           </span>
         </span>
       ),
-      price: "$24",
+      price: (
+        <span>
+          <span className="line-through font-medium text-foreground/70">
+            $24
+          </span>
+          <span className="ml-2 font-medium">$9</span>
+        </span>
+      ),
       period: "/month",
       description: "Perfect for families just getting started with AI learning",
       features: [
@@ -32,7 +39,11 @@ export function Pricing() {
         "Weekly usage reports",
         "Email support",
       ],
-      cta: <span>Start 3-day free trial</span>,
+      cta: (
+        <span className="font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+          Start Your Free 3-Day Adventure!
+        </span>
+      ),
       popular: false,
     },
     {
@@ -45,7 +56,14 @@ export function Pricing() {
           </span>
         </span>
       ),
-      price: "$149",
+      price: (
+        <span>
+          <span className="line-through font-medium text-foreground/70">
+            $144
+          </span>
+          <span className="ml-2 font-medium">$55</span>
+        </span>
+      ),
       period: "/year",
       description:
         "Our most popular plan for families committed to AI learning",
@@ -58,7 +76,7 @@ export function Pricing() {
         "Personalized learning paths",
         "Save over 50% compared to monthly",
       ],
-      cta: <span>Start Annual Plan (+ 3-day free trial)</span>,
+      cta: <span className="font-bold">Start Your 3-Day Free Trial!</span>,
       popular: true,
     },
   ];
@@ -120,9 +138,7 @@ export function Pricing() {
                   asChild
                 >
                   {/* no Link, because this is a GET request for a stripe checkout */}
-                  <a href={`/buy?plan=${plan.api_plan_name}`}>
-                    {plan.cta}
-                  </a>
+                  <a href={`/buy?plan=${plan.api_plan_name}`}>{plan.cta}</a>
                 </Button>
               </CardFooter>
             </Card>

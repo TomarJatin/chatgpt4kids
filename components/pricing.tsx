@@ -119,9 +119,10 @@ export function Pricing() {
                   variant={plan.popular ? "default" : "outline"}
                   asChild
                 >
-                  <Link href={`/buy?plan=${plan.api_plan_name}`}>
+                  {/* no Link, because this is a GET request for a stripe checkout */}
+                  <a href={`/buy?plan=${plan.api_plan_name}`}>
                     {plan.cta}
-                  </Link>
+                  </a>
                 </Button>
               </CardFooter>
             </Card>

@@ -102,7 +102,8 @@ export async function GET(request: Request) {
 
       client_reference_id: c4k_user_id,
       subscription_data: {
-        trial_period_days: 3,
+        // trial_period_days: 3,
+        trial_period_days: 30,
         metadata: {
           c4k_user_id,
           c4k_user_email,

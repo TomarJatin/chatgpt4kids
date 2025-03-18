@@ -41,7 +41,7 @@ export function Navbar() {
             <Link href="/login">Log in</Link>
           </Button>
           <Button asChild>
-            <Link href="#pricing">Get Started</Link>
+            <Link href="#pricing">Get Started for Free!</Link>
           </Button>
         </nav>
 
@@ -86,7 +86,7 @@ export function Navbar() {
               </Button>
               <Button asChild>
                 <Link href="#pricing" onClick={() => setIsMenuOpen(false)}>
-                  Get Started
+                  Get Started for Free!
                 </Link>
               </Button>
             </div>

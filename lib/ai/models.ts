@@ -23,4 +23,9 @@ export const chatModels: Array<ChatModel> = [
     description:
       'Faster than Smart AI, but can be less accurate & detailed.',
   },
+  {
+    id: 'chat-model-homework',
+    name: 'Homework Mode',
+    description: 'Helps with homework by guiding students through problems step-by-step without giving direct answers.',
+  },
 ];

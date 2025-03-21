@@ -119,6 +119,8 @@ const PurePreviewMessage = ({
                   className={cn('flex flex-col gap-4', {
                     'bg-primary text-primary-foreground px-3 py-2 rounded-xl':
                       message.role === 'user',
+                      // User should to keep original line breaks:
+                    'whitespace-pre-wrap': message.role === 'user',
                   })}
                 >
                   <Markdown>{message.content as string}</Markdown>

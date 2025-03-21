@@ -41,7 +41,7 @@ export function Chat({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel: selectedChatModel },
+    body: { id, selectedChatModel },
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,
@@ -84,6 +84,7 @@ export function Chat({
           reload={reload}
           isReadonly={isReadonly}
           isArtifactVisible={isArtifactVisible}
+          selectedChatModel={selectedChatModel}
         />
 
         <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
@@ -100,6 +101,7 @@ export function Chat({
               messages={messages}
               setMessages={setMessages}
               append={append}
+              selectedChatModel={selectedChatModel}
             />
           )}
         </form>

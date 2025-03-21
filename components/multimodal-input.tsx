@@ -6,7 +6,6 @@ import type {
   CreateMessage,
   Message,
 } from 'ai';
-import cx from 'classnames';
 import type React from 'react';
 import {
   useRef,
@@ -21,7 +20,7 @@ import {
 import { toast } from 'sonner';
 import { useLocalStorage, useWindowSize } from 'usehooks-ts';
 
-import { sanitizeUIMessages } from '@/lib/utils';
+import { cn, sanitizeUIMessages } from '@/lib/utils';
 
 import { ArrowUpIcon, PaperclipIcon, StopIcon } from './icons';
 import { PreviewAttachment } from './preview-attachment';
@@ -43,6 +42,7 @@ function PureMultimodalInput({
   append,
   handleSubmit,
   className,
+  selectedChatModel,
 }: {
   chatId: string;
   input: string;
@@ -64,9 +64,13 @@ function PureMultimodalInput({
     chatRequestOptions?: ChatRequestOptions,
   ) => void;
   className?: string;
+  selectedChatModel?: string;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
+
+  // Check if this is homework mode
+  const isHomeworkMode = selectedChatModel === 'chat-model-homework';
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -236,10 +240,10 @@ function PureMultimodalInput({
       <Textarea
         data-testid="multimodal-input"
         ref={textareaRef}
-        placeholder="Send a message..."
+        placeholder={isHomeworkMode ? "Type your homework problem or upload an image..." : "Send a message..."}
         value={input}
         onChange={handleInput}
-        className={cx(
+        className={cn(
           'min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base bg-muted pb-10 dark:border-zinc-700',
           className,
         )}
@@ -263,7 +267,11 @@ function PureMultimodalInput({
       />
 
       <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
-        <AttachmentsButton fileInputRef={fileInputRef} isLoading={isLoading} />
+        <AttachmentsButton
+          fileInputRef={fileInputRef}
+          isLoading={isLoading}
+          isHomeworkMode={isHomeworkMode}
+        />
       </div>
 
       <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
@@ -295,14 +303,21 @@ export const MultimodalInput = memo(
 function PureAttachmentsButton({
   fileInputRef,
   isLoading,
+  isHomeworkMode,
 }: {
   fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
   isLoading: boolean;
+  isHomeworkMode?: boolean;
 }) {
   return (
     <Button
       data-testid="attachments-button"
-      className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
+      className={cn(
+        "rounded-md p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200",
+        isHomeworkMode
+          ? "rounded-2xl flex items-center gap-1 px-2"
+          : "rounded-bl-lg"
+      )}
       onClick={(event) => {
         event.preventDefault();
         fileInputRef.current?.click();
@@ -311,6 +326,7 @@ function PureAttachmentsButton({
       variant="ghost"
     >
       <PaperclipIcon size={14} />
+      {isHomeworkMode && <span className="text-xs">Upload homework</span>}
     </Button>
   );
 }

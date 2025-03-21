@@ -56,7 +56,14 @@ export const Overview = () => {
 };
 */
 
-export const Overview = () => {
+export const Overview = ({
+  selectedChatModel,
+}: {
+  selectedChatModel?: string;
+}) => {
+  // Check if this is homework mode
+  const isHomeworkMode = selectedChatModel === "chat-model-homework";
+
   return (
     <motion.div
       key="overview"
@@ -66,34 +73,76 @@ export const Overview = () => {
       exit={{ opacity: 0, scale: 0.98 }}
       transition={{ delay: 0.5 }}
     >
-      <div className="rounded-xl p-6 flex flex-col gap-2 leading-relaxed text-center max-w-xl">
-        <div className="flex flex-row justify-center items-center m-4">
-          <div className="bg-white rounded-full m-2 p-2 size-[120px] flex flex-row justify-center items-center border-2 border-gray-300">
-            <Image
-              alt="Favicon Mascot"
-              // src="https://img.freepik.com/premium-vector/dolphin-vector-icon-dolphin-illustration-sign-dolphin-symbol-logo_186686-759.jpg"
-              // src="https://cdn-icons-png.flaticon.com/512/427/427463.png"
-              src={happyFavicon}
-              className="size-[100px] object-contain"
-              style={{
-                width: "100px",
-                // transform: "scaleX(-1) translateX(-5px)",
-                // transform: "translateX(0px)",
-              }}
-              referrerPolicy="no-referrer"
-              loading="eager"
-              fetchPriority="high"
-              decoding="sync"
-            />
+      {isHomeworkMode ? (
+        <div className="rounded-xl p-6 flex flex-col gap-4 leading-relaxed text-center max-w-xl">
+          <div className="flex flex-row justify-center items-center m-4">
+            <div className="bg-white rounded-full m-2 p-2 size-[120px] flex flex-row justify-center items-center border-2 border-gray-300">
+              <Image
+                alt="Favicon Mascot"
+                src={happyFavicon}
+                className="size-[100px] object-contain"
+                style={{
+                  width: "100px",
+                }}
+                referrerPolicy="no-referrer"
+                loading="eager"
+                fetchPriority="high"
+                decoding="sync"
+              />
+            </div>
           </div>
-        </div>
 
-        <p>
-          <strong>Favicon</strong> is a curious dolphin who can answer almost
-          any question!
-        </p>
-        <p>Ask him anything, and he will do his best to answer.</p>
-      </div>
+          <h2 className="text-xl font-bold">Homework Helper Mode</h2>
+          <p>
+            I&apos;ll help you work through your homework problems step-by-step!
+          </p>
+          <div className="text-left mt-2 bg-muted p-4 rounded-lg">
+            <p className="font-semibold mb-2">How to use Homework Mode:</p>
+            <ol className="list-decimal pl-5 space-y-1">
+              <li>
+                Upload an image of your homework problem or type it in the chat
+              </li>
+              <li>I&apos;ll guide you through solving it step-by-step</li>
+              <li>
+                I won&apos;t give you the answer directly - I&apos;m here to
+                help you learn!
+              </li>
+              <li>
+                If you get stuck, I&apos;ll provide hints to get you back on
+                track
+              </li>
+            </ol>
+          </div>
+          <p className="mt-2">
+            Ready to get started? Share your homework problem with me!
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-xl p-6 flex flex-col gap-2 leading-relaxed text-center max-w-xl">
+          <div className="flex flex-row justify-center items-center m-4">
+            <div className="bg-white rounded-full m-2 p-2 size-[120px] flex flex-row justify-center items-center border-2 border-gray-300">
+              <Image
+                alt="Favicon Mascot"
+                src={happyFavicon}
+                className="size-[100px] object-contain"
+                style={{
+                  width: "100px",
+                }}
+                referrerPolicy="no-referrer"
+                loading="eager"
+                fetchPriority="high"
+                decoding="sync"
+              />
+            </div>
+          </div>
+
+          <p>
+            <strong>Favicon</strong> is a curious dolphin who can answer almost
+            any question!
+          </p>
+          <p>Ask him anything, and he will do his best to answer.</p>
+        </div>
+      )}
     </motion.div>
   );
 };

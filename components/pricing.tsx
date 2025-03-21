@@ -164,7 +164,7 @@ export function Pricing() {
       price: <span>Free!</span>,
       period: "/month",
       description:
-        "Then $9/mo after than. Perfect for families just getting started with AI learning",
+        "Then $9/mo after that. Perfect for families just getting started with AI learning",
       features: [
         "Access for up to 3 children",
         "Age-appropriate content moderation",

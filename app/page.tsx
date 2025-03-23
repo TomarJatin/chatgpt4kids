@@ -4,6 +4,7 @@ import { Features } from "@/components/features";
 import { Pricing } from "@/components/pricing";
 import { FAQ } from "@/components/faq";
 import { Footer } from "@/components/footer";
+import { HomeworkModeHero } from "@/components/homework-mode-hero";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       <Navbar />
       <main className="grow">
         <Hero />
+        <HomeworkModeHero/>
         <Features />
         <Pricing />
         <FAQ />

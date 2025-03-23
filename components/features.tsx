@@ -1,3 +1,4 @@
+import React from "react";
 import { Sparkles, Folder, ListChecks, Users } from "lucide-react";
 import {
   Card,
@@ -7,10 +8,35 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+// Define the props interface
+interface GradientIconProps {
+  Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  sizeClass?: string;
+}
+
+function GradientIcon({ Icon, sizeClass = "w-10 h-10 md:w-12 md:h-12" }: GradientIconProps) {
+  const gradientId = React.useMemo(
+    () => `gradient-${Math.random().toString(36).substring(2, 15)}`,
+    []
+  );
+
+  return (
+    <svg className={sizeClass} viewBox="0 0 24 24">
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#06b6d4" /> 
+          <stop offset="100%" stopColor="#2563eb" /> 
+        </linearGradient>
+      </defs>
+      <Icon stroke={`url(#${gradientId})`} fill="none" />
+    </svg>
+  );
+}
+
 export function Features() {
   const features = [
     {
-      icon: <Sparkles className="size-10 md:size-12 text-primary" />,
+      icon: <GradientIcon Icon={Sparkles} />,
       title: "Customized to your child's age",
       description: (
         <span>
@@ -25,19 +51,19 @@ export function Features() {
       ),
     },
     {
-      icon: <Folder className="size-10 md:size-12 text-primary" />,
+      icon: <GradientIcon Icon={Folder} />,
       title: "Daily Usage Report",
       description:
         "Get insights into what your child is learning, their favorite topics, and time spent exploring.",
     },
     {
-      icon: <ListChecks className="size-10 md:size-12 text-primary" />,
+      icon: <GradientIcon Icon={ListChecks} />,
       title: "Custom Rules",
       description:
         "Set your own guidelines to shape how the AI responds, ensuring a personalized and safe experience for your child.",
     },
     {
-      icon: <Users className="size-10 md:size-12 text-primary" />,
+      icon: <GradientIcon Icon={Users} />,
       title: "Supports up to 3 children under one subscription",
       description: "Each child has their own account and learning profile.",
     },
@@ -48,9 +74,6 @@ export function Features() {
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
-            <div className="inline-block rounded-lg bg-primary px-3 py-1 text-sm text-primary-foreground">
-              Features
-            </div>
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
               Built for Children, Controlled by Parents
             </h2>
@@ -71,7 +94,7 @@ export function Features() {
                 <div className="mb-2">{feature.icon}</div>
                 <CardTitle className="text-xl">{feature.title}</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pb-12 flex-1">
                 <CardDescription className="text-base">
                   {feature.description}
                 </CardDescription>

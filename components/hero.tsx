@@ -20,11 +20,11 @@ export function Hero() {
                 </h1>
                 <p className="max-w-[600px] text-muted-foreground md:text-xl mb-0 pb-0">
                   AI tools like ChatGPT are great for{" "}
-                  <span className="font-semibold text-primary">
+                  <span className="font-semibold text-sky-500">
                     exploring information
                   </span>{" "}
                   and
-                  <span className="font-semibold text-primary">
+                  <span className="font-semibold text-sky-500">
                     {" "}
                     tackling tasks
                   </span>
@@ -33,7 +33,7 @@ export function Hero() {
                 <p className="max-w-[600px] text-muted-foreground md:text-xl mt-0 pt-0">
                   <span className="font-semibold">
                     That&apos;s why we created{" "}
-                    <span className="tracking-[-0.048em] font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent pe-[1px]">
+                    <span className="tracking-[-0.048em] font-bold text-primary">
                       ChatGP<span className="tracking-[-0.07em]">T </span>fo
                       <span className="tracking-[-0.07em]">r </span>Kids
                     </span>

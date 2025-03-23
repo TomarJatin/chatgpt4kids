@@ -164,8 +164,9 @@ export function Pricing() {
       price: <span>Free!</span>,
       period: "/month",
       description:
-        "Then $9/mo after that. Perfect for families just getting started with AI learning",
+        "Then just $9/mo.",
       features: [
+        "Homework mode",
         "Access for up to 3 children",
         "Age-appropriate content moderation",
         "Basic parental controls",
@@ -250,7 +251,7 @@ export function Pricing() {
                 </CardTitle>
                 <CardDescription className="mt-2">
                   <p className="text-muted-foreground mb-3">
-                    Then just $9/mo after than.
+                    Then just $9/mo.
                   </p>
                   <p className="text-muted-foreground">
                     Perfect for families just getting started with AI learning

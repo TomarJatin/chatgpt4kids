@@ -35,21 +35,10 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               }}
               className="flex flex-row gap-3 items-center"
             >
-              {/* <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                ChatGP
-                <span className="tracking-wider">
-                  T<span className="font-[700]">4</span>
-                </span>
-                Kids
-              </span> */}
               <span className="text-lg tracking-[-0.048em] font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
                 ChatGP<span className="tracking-[-0.07em]">T </span>fo
                 <span className="tracking-[-0.07em]">r </span>Kids
               </span>
-              {/* <span className="tracking-[-0.048em] text-lg font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-                ChatGP<span className="tracking-[-0.07em]">T </span>fo
-                <span className="tracking-[-0.07em]">r </span>Kids
-              </span> */}
             </Link>
             <Tooltip>
               <TooltipTrigger asChild>

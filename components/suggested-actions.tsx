@@ -1,21 +1,25 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { Button } from './ui/button';
-import { ChatRequestOptions, CreateMessage, Message } from 'ai';
-import { memo } from 'react';
-import { cn } from '@/lib/utils';
+import { motion } from "framer-motion";
+import { Button } from "./ui/button";
+import { ChatRequestOptions, CreateMessage, Message } from "ai";
+import { memo } from "react";
+import { cn } from "@/lib/utils";
 
 interface SuggestedActionsProps {
   chatId: string;
   append: (
     message: Message | CreateMessage,
-    chatRequestOptions?: ChatRequestOptions,
+    chatRequestOptions?: ChatRequestOptions
   ) => Promise<string | null | undefined>;
-  homeworkMode?: boolean; 
+  homeworkMode?: boolean;
 }
 
-function PureSuggestedActions({ chatId, append, homeworkMode = false }: SuggestedActionsProps) {
+function PureSuggestedActions({
+  chatId,
+  append,
+  homeworkMode = false,
+}: SuggestedActionsProps) {
   const suggestedActions = [
     {
       title: `What's a day in the life like`,
@@ -35,7 +39,7 @@ function PureSuggestedActions({ chatId, append, homeworkMode = false }: Suggeste
     {
       title: `Can you explain`,
       label: `how the weather cycle works?`,
-      action: 'Can you explain how the weather cycle works?',
+      action: "Can you explain how the weather cycle works?",
     },
   ];
 
@@ -62,7 +66,9 @@ function PureSuggestedActions({ chatId, append, homeworkMode = false }: Suggeste
     },
   ];
 
-  const suggestions = homeworkMode ? suggestedActionsHomework : suggestedActions;
+  const suggestions = homeworkMode
+    ? suggestedActionsHomework
+    : suggestedActions;
 
   return (
     <div
@@ -77,17 +83,18 @@ function PureSuggestedActions({ chatId, append, homeworkMode = false }: Suggeste
           transition={{ delay: 0.05 * index }}
           key={`suggested-action-${suggestedAction.title}-${index}`}
           className={cn(
-            index > 1 ? 'hidden sm:block' : 'block',
-            'overflow-hidden',
+            index > 1 ? "hidden sm:block" : "block",
+            // don't let suggestions widen the chat window, instead truncate the text
+            "overflow-hidden"
           )}
         >
           <Button
             variant="ghost"
             onClick={async () => {
-              window.history.replaceState({}, '', `/chat/${chatId}`);
+              window.history.replaceState({}, "", `/chat/${chatId}`);
 
               append({
-                role: 'user',
+                role: "user",
                 content: suggestedAction.action,
               });
             }}

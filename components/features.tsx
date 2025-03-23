@@ -1,4 +1,4 @@
-import React from "react";
+import { useId } from "react";
 import { Sparkles, Folder, ListChecks, Users } from "lucide-react";
 import {
   Card,
@@ -14,18 +14,18 @@ interface GradientIconProps {
   sizeClass?: string;
 }
 
-function GradientIcon({ Icon, sizeClass = "w-10 h-10 md:w-12 md:h-12" }: GradientIconProps) {
-  const gradientId = React.useMemo(
-    () => `gradient-${Math.random().toString(36).substring(2, 15)}`,
-    []
-  );
+function GradientIcon({
+  Icon,
+  sizeClass = "w-10 h-10 md:w-12 md:h-12",
+}: GradientIconProps) {
+  const gradientId = useId();
 
   return (
     <svg className={sizeClass} viewBox="0 0 24 24">
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#06b6d4" /> 
-          <stop offset="100%" stopColor="#2563eb" /> 
+          <stop offset="0%" stopColor="#06b6d4" />
+          <stop offset="100%" stopColor="#2563eb" />
         </linearGradient>
       </defs>
       <Icon stroke={`url(#${gradientId})`} fill="none" />

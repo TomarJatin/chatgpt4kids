@@ -23,6 +23,11 @@ export default async function Layout({
         // this could slow things down, is it necessary?
         strategy="beforeInteractive"
       />
+      <Script
+        src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+        // this could slow things down, is it necessary?
+        strategy="beforeInteractive"
+      />
       <SidebarProvider defaultOpen={!isCollapsed}>
         <AppSidebar user={session?.user} />
         <SidebarInset>{children}</SidebarInset>

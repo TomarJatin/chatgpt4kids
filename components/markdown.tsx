@@ -1,8 +1,15 @@
-import Link from 'next/link';
-import React, { memo } from 'react';
-import ReactMarkdown, { type Components } from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { CodeBlock } from './code-block';
+import Link from "next/link";
+import React, { memo } from "react";
+import ReactMarkdown, { type Components } from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+
+// // `rehype-katex` does not import the CSS for you
+// import "katex/dist/katex.min.css";
+// Note: this is done in the chat layout.tsx
+
+import { CodeBlock } from "./code-block";
 
 const components: Partial<Components> = {
   // @ts-expect-error
@@ -38,12 +45,12 @@ const components: Partial<Components> = {
   },
   a: ({ node, children, ...props }) => {
     return (
-      // @ts-expect-error
       <Link
         className="text-blue-500 hover:underline"
         target="_blank"
         rel="noreferrer"
         {...props}
+        href={props.href ?? "#"}
       >
         {children}
       </Link>
@@ -93,17 +100,51 @@ const components: Partial<Components> = {
   },
 };
 
-const remarkPlugins = [remarkGfm];
+const remarkPlugins = [remarkGfm, remarkMath];
+const rehypePlugins = [rehypeKatex];
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
+  if (typeof children !== "string")
+    throw new Error("markdown children must be a string");
+
+  // \(v\) -> $$v$$
+  // \[v\] -> $$v$$
+  // children = children.replace(/\\\((.+?)\\\)/g, "$$$$$1$$$$");
+  // children = children.replace(/\\\[(.+?)\\\]/g, "$$$$$1$$$$");
+  // together in one regex:
+  children = children.replace(/(\\\((.+?)\\\)|\\\[(.+?)\\\])/g, "$$$$$2$3$$$$");
+
   return (
-    <ReactMarkdown remarkPlugins={remarkPlugins} components={components}>
+    <ReactMarkdown
+      remarkPlugins={remarkPlugins}
+      rehypePlugins={rehypePlugins}
+      components={components}
+    >
       {children}
+
+      {/* tests/examples: */}
+
+      {/* {`$\\sigma_U \\sim \\mathrm{Normal}(0, \\Theta_U^2)$`} */}
+
+      {/* {`
+Lift($$L$$) can be determined by Lift Coefficient ($$C_L$$) like the following
+equation.
+
+$$
+L = \\frac{1}{2} \\rho v^2 S C_L
+$$
+`} */}
+
+      {/* {`
+\`\`\`math
+L2 = \\frac{1}{2} \\rho v^2 S C_L
+\`\`\`
+`} */}
     </ReactMarkdown>
   );
 };
 
 export const Markdown = memo(
   NonMemoizedMarkdown,
-  (prevProps, nextProps) => prevProps.children === nextProps.children,
+  (prevProps, nextProps) => prevProps.children === nextProps.children
 );

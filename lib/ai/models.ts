@@ -9,17 +9,17 @@ interface ChatModel {
 export const chatModels: Array<ChatModel> = [
   {
     id: 'chat-model-large',
-    name: 'Smart AI',
+    name: 'Smart',
     description: 'Default — fit for all questions, simple or complex.',
   },
-  {
-    id: 'chat-model-reasoning',
-    name: 'Deep Thinking AI',
-    description: 'Uses advanced reasoning — starts with a "thinking" step, then outputs a thought-out response.',
-  },
+  // {
+  //   id: 'chat-model-reasoning',
+  //   name: 'Deep Thinking AI',
+  //   description: 'Uses advanced reasoning — starts with a "thinking" step, then outputs a thought-out response.',
+  // },
   {
     id: 'chat-model-small',
-    name: 'Fast AI',
+    name: 'Fast',
     description:
       'Faster than Smart AI, but can be less accurate & detailed.',
   },

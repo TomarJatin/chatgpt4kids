@@ -138,7 +138,9 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Favicon. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} ChatGPT For Kids. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

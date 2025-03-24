@@ -9,9 +9,10 @@ export function FAQ() {
   const faqs = [
     {
       question:
-        "Do any other companies (like OpenAI, Anthropic/Claude, etc) store and have access to my child's data?",
+        "Do any other companies (like OpenAI, Anthropic/Claude, etc) have access to my child's data?",
       answer: `Nope, never!
-      While we use AI models from companies like OpenAI etc., our service agreement with them specifically does not permit them to save or store the messages. Only ChatGPT for Kids ever has access to messages so that you can review them.`,
+
+While we use AI models from companies like OpenAI, our service agreement with them specifically forbids them from saving the messages for training or saving request data indefinitely. Only ChatGPT for Kids ever has access to messages so that you can review them.`,
     },
     {
       question:

@@ -17,18 +17,18 @@ export function ProviderProgressBar({
       }}
       startOnLoad
       shallowRouting
-      /*
-       * Note: we use this (with disableAnchorClick={false}) to make the animation
-       * happen for anchor clicks/navigations.
-       *
-       * Currently, our landing page sections are all on one page, with #anchor's
-       * and links to them for Pricing, Features, FAQ, etc.
-       *
-       * This way it's even more clear to non-tech-savy users that a navigation has
-       * occurred following their click (sometimes it's less clear that something
-       * has changed, because it happens faster than the blink of an eye).
-       */
-      disableSameURL={false}
+      // /*
+      //  * Note: we use this (with disableAnchorClick={false}) to make the animation
+      //  * happen for anchor clicks/navigations.
+      //  *
+      //  * Currently, our landing page sections are all on one page, with #anchor's
+      //  * and links to them for Pricing, Features, FAQ, etc.
+      //  *
+      //  * This way it's even more clear to non-tech-savy users that a navigation has
+      //  * occurred following their click (sometimes it's less clear that something
+      //  * has changed, because it happens faster than the blink of an eye).
+      //  */
+      // disableSameURL={false}
     >
       {children}
     </ProgressProvider>

@@ -9,93 +9,91 @@ import rehypeKatex from "rehype-katex";
 // import "katex/dist/katex.min.css";
 // Note: this is done in the chat layout.tsx
 
-import { CodeBlock } from "./code-block";
+import { cn } from "@/lib/utils";
 
 const components: Partial<Components> = {
-  // @ts-expect-error
-  code: CodeBlock,
+  p: ({ children }) => <div>{children}</div>,
+
+  strong: ({ node, ...props }) => <span className="font-semibold" {...props} />,
+  a: ({ node, href = "#", ...props }) => (
+    <Link
+      className="text-blue-500 hover:underline"
+      target="_blank"
+      rel="noreferrer"
+      {...props}
+      href={href}
+    />
+  ),
+
+  ol: ({ node, ...props }) => (
+    <ol className="list-decimal list-outside ml-4" {...props} />
+  ),
+  li: ({ node, ...props }) => <li className="py-1" {...props} />,
+  ul: ({ node, ...props }) => (
+    <ul className="list-decimal list-outside ml-4" {...props} />
+  ),
+
+  h1: ({ node, ...props }) => (
+    <h1 className="text-3xl font-semibold mt-6 mb-2" {...props} />
+  ),
+  h2: ({ node, ...props }) => (
+    <h2 className="text-2xl font-semibold mt-6 mb-2" {...props} />
+  ),
+  h3: ({ node, ...props }) => (
+    <h3 className="text-xl font-semibold mt-6 mb-2" {...props} />
+  ),
+  h4: ({ node, ...props }) => (
+    <h4 className="text-lg font-semibold mt-6 mb-2" {...props} />
+  ),
+  h5: ({ node, ...props }) => (
+    <h5 className="text-base font-semibold mt-6 mb-2" {...props} />
+  ),
+  h6: ({ node, ...props }) => (
+    <h6 className="text-sm font-semibold mt-6 mb-2" {...props} />
+  ),
+
+  // currently, this library uses `pre` for multiline code blocks, and no
+  // longer passes `inline` to `code`:
+  // https://github.com/remarkjs/react-markdown/commit/434627686e21d4bcfb4301417e0da2bb851d4391
+  //
+  // Hence, we don't put our custom `code`, maybe having a nested <div>, inside a <pre> tag,
+  // and instead elide the <pre> altogether.
   pre: ({ children }) => <>{children}</>,
-  ol: ({ node, children, ...props }) => {
+
+  code: ({ node, className, ...props }) => {
+    if (!node) throw new Error("node is required");
+    const isInline =
+      node.children.length === 1 &&
+      node.children[0].type === "text" &&
+      !node.children[0].value.includes("\n");
+    console.log(node, isInline, className);
+
+    // let langs: string[] = [];
+    // if ("className" in node.properties) {
+    //   const classes = node.properties.className;
+    //   invariant(Array.isArray(classes), "classes must be an array");
+    //   langs = classes.filter((c) => {
+    //     invariant(typeof c === "string", "class must be a string");
+    //     return c.startsWith("language-");
+    //   }) as string[];
+    // }
+
+    const commonCodeCss = "not-prose text-sm font-mono whitespace-pre-wrap";
+    const inlineCodeCss = "border py-0.5 px-1 rounded-md";
+
+    if (isInline) {
+      return (
+        <code
+          className={cn(commonCodeCss, inlineCodeCss, className)}
+          {...props}
+        />
+      );
+    }
+
     return (
-      <ol className="list-decimal list-outside ml-4" {...props}>
-        {children}
-      </ol>
-    );
-  },
-  li: ({ node, children, ...props }) => {
-    return (
-      <li className="py-1" {...props}>
-        {children}
-      </li>
-    );
-  },
-  ul: ({ node, children, ...props }) => {
-    return (
-      <ul className="list-decimal list-outside ml-4" {...props}>
-        {children}
-      </ul>
-    );
-  },
-  strong: ({ node, children, ...props }) => {
-    return (
-      <span className="font-semibold" {...props}>
-        {children}
-      </span>
-    );
-  },
-  a: ({ node, children, ...props }) => {
-    return (
-      <Link
-        className="text-blue-500 hover:underline"
-        target="_blank"
-        rel="noreferrer"
-        {...props}
-        href={props.href ?? "#"}
-      >
-        {children}
-      </Link>
-    );
-  },
-  h1: ({ node, children, ...props }) => {
-    return (
-      <h1 className="text-3xl font-semibold mt-6 mb-2" {...props}>
-        {children}
-      </h1>
-    );
-  },
-  h2: ({ node, children, ...props }) => {
-    return (
-      <h2 className="text-2xl font-semibold mt-6 mb-2" {...props}>
-        {children}
-      </h2>
-    );
-  },
-  h3: ({ node, children, ...props }) => {
-    return (
-      <h3 className="text-xl font-semibold mt-6 mb-2" {...props}>
-        {children}
-      </h3>
-    );
-  },
-  h4: ({ node, children, ...props }) => {
-    return (
-      <h4 className="text-lg font-semibold mt-6 mb-2" {...props}>
-        {children}
-      </h4>
-    );
-  },
-  h5: ({ node, children, ...props }) => {
-    return (
-      <h5 className="text-base font-semibold mt-6 mb-2" {...props}>
-        {children}
-      </h5>
-    );
-  },
-  h6: ({ node, children, ...props }) => {
-    return (
-      <h6 className="text-sm font-semibold mt-6 mb-2" {...props}>
-        {children}
-      </h6>
+      <div className="border rounded-md p-2">
+        <code className={cn(commonCodeCss, className)} {...props} />
+      </div>
     );
   },
 };

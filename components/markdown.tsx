@@ -103,16 +103,47 @@ const components: Partial<Components> = {
 const remarkPlugins = [remarkGfm, remarkMath];
 const rehypePlugins = [rehypeKatex];
 
+// in nodejs, on my M1 macbook, reusing this saves ~5ms (~10ms -> ~5ms for .replaceAll(...))
+const latexRegexStateful = /(\\\((.+?)\\\)|\\\[(.+?)\\\])/gsu;
+
+/*
+
+Examples:
+
+const examples = `
+\\[
+\\Gamma(n) = \\int_0^\\infty t^{n-1} e^{-t} dt
+\\]
+
+$\\sigma_U \\sim \\mathrm{Normal}(0, \\Theta_U^2)$
+
+
+Lift($$L$$) can be determined by Lift Coefficient ($$C_L$$) like the following
+equation.
+
+$$
+L = \\frac{1}{2} \\rho v^2 S C_L
+$$
+
+\`\`\`math
+L2 = \\frac{1}{2} \\rho v^2 S C_L
+\`\`\`
+
+`;
+ */
+
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   if (typeof children !== "string")
     throw new Error("markdown children must be a string");
 
   // \(v\) -> $$v$$
   // \[v\] -> $$v$$
-  // children = children.replace(/\\\((.+?)\\\)/g, "$$$$$1$$$$");
-  // children = children.replace(/\\\[(.+?)\\\]/g, "$$$$$1$$$$");
+  // children = children.replace(/\\\((.+?)\\\)/gsu, "$$$$$1$$$$");
+  // children = children.replace(/\\\[(.+?)\\\]/gsu, "$$$$$1$$$$");
+  // -or-
   // together in one regex:
-  children = children.replace(/(\\\((.+?)\\\)|\\\[(.+?)\\\])/g, "$$$$$2$3$$$$");
+  latexRegexStateful.lastIndex = 0;
+  children = children.replaceAll(latexRegexStateful, "$$$$$2$3$$$$");
 
   return (
     <ReactMarkdown
@@ -121,25 +152,6 @@ const NonMemoizedMarkdown = ({ children }: { children: string }) => {
       components={components}
     >
       {children}
-
-      {/* tests/examples: */}
-
-      {/* {`$\\sigma_U \\sim \\mathrm{Normal}(0, \\Theta_U^2)$`} */}
-
-      {/* {`
-Lift($$L$$) can be determined by Lift Coefficient ($$C_L$$) like the following
-equation.
-
-$$
-L = \\frac{1}{2} \\rho v^2 S C_L
-$$
-`} */}
-
-      {/* {`
-\`\`\`math
-L2 = \\frac{1}{2} \\rho v^2 S C_L
-\`\`\`
-`} */}
     </ReactMarkdown>
   );
 };

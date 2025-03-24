@@ -10,9 +10,7 @@ export function FAQ() {
     {
       question:
         "Do any other companies (like OpenAI, Anthropic/Claude, etc) have access to my child's data?",
-      answer: `Nope, never!
-
-While we use AI models from companies like OpenAI, our service agreement with them specifically forbids them from saving the messages for training or saving request data indefinitely. Only ChatGPT for Kids ever has access to messages so that you can review them.`,
+      answer: `We use AI models from companies like OpenAI, but our service agreement with them specifically forbids them from saving messages for training, or from saving request data indefinitely (beyond 30 days), to help prevent abuse.`,
     },
     {
       question:

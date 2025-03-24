@@ -15,7 +15,7 @@ export const config = {
      */
     {
       source:
-        '/((?!_next/static|_next/image|apple-touch-icon|favicon.|manifest.|sitemap.|robots.|static/|fonts/|ingest|pricing|api/stripe/webhook).*)',
+        '/((?!_next/static|_next/image|apple-touch-icon|favicon.|manifest.|sitemap.|robots.|static/|fonts/|ingest|privacy-policy|terms-of-use|api/stripe/webhook).*)',
     },
   ],
 }

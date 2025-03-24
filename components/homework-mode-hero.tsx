@@ -67,10 +67,10 @@ export function HomeworkModeHero() {
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
                 <Button asChild size="lg" className="px-8">
-                  <Link href="#pricing">Get Started for Free!</Link>
+                  <Link href="/#pricing">Get Started for Free!</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <Link href="#features">Learn More</Link>
+                  <Link href="/#features">Learn More</Link>
                 </Button>
               </div>
             </div>

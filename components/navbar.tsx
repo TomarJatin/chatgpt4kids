@@ -23,25 +23,25 @@ export function Navbar() {
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-6">
           <Link
-            href="#features"
+            href="/#features"
             className="text-sm font-medium hover:text-primary"
           >
             Features
           </Link>
           <Link
-            href="#pricing"
+            href="/#pricing"
             className="text-sm font-medium hover:text-primary"
           >
             Pricing
           </Link>
-          <Link href="#faq" className="text-sm font-medium hover:text-primary">
+          <Link href="/#faq" className="text-sm font-medium hover:text-primary">
             FAQ
           </Link>
           <Button asChild variant="outline" className="mr-2">
             <Link href="/login">Log in</Link>
           </Button>
           <Button asChild>
-            <Link href="#pricing">Get Started for Free!</Link>
+            <Link href="/#pricing">Get Started for Free!</Link>
           </Button>
         </nav>
 
@@ -60,21 +60,21 @@ export function Navbar() {
         <div className="md:hidden container py-4 pb-6 border-b">
           <nav className="flex flex-col gap-4">
             <Link
-              href="#features"
+              href="/#features"
               className="text-sm font-medium hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
             >
               Features
             </Link>
             <Link
-              href="#pricing"
+              href="/#pricing"
               className="text-sm font-medium hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
             >
               Pricing
             </Link>
             <Link
-              href="#faq"
+              href="/#faq"
               className="text-sm font-medium hover:text-primary"
               onClick={() => setIsMenuOpen(false)}
             >
@@ -85,7 +85,7 @@ export function Navbar() {
                 <Link href="/login">Log in</Link>
               </Button>
               <Button asChild>
-                <Link href="#pricing" onClick={() => setIsMenuOpen(false)}>
+                <Link href="/#pricing" onClick={() => setIsMenuOpen(false)}>
                   Get Started for Free!
                 </Link>
               </Button>

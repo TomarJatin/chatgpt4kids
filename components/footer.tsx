@@ -46,7 +46,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="#features"
+                  href="/#features"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Features
@@ -54,7 +54,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#pricing"
+                  href="/#pricing"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Pricing
@@ -62,7 +62,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/#testimonials"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Testimonials
@@ -70,7 +70,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/#safety"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Safety
@@ -83,7 +83,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="#"
+                  href="/#about"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   About
@@ -91,7 +91,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/#contact"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Contact
@@ -104,7 +104,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="#"
+                  href="/privacy-policy"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Privacy Policy
@@ -112,7 +112,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/terms-of-use"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Terms of Service
@@ -120,7 +120,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/privacy-policy"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Cookie Policy
@@ -128,7 +128,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#"
+                  href="/privacy-policy"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Children&apos;s Privacy

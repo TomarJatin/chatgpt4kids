@@ -25,12 +25,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: "https://chatgpt4kids.com/privacy-policy",
-      lastModified: "2025-03-24T06:38:02.920Z",
+      lastModified: "2025-03-24T06:58:42.521Z",
       priority: 0.1,
     },
     {
       url: "https://chatgpt4kids.com/terms-of-use",
-      lastModified: "2025-03-24T06:38:02.920Z",
+      lastModified: "2025-03-24T06:58:42.521Z",
       priority: 0.1,
     },
   ];

@@ -109,20 +109,48 @@ function PolicyContent() {
           </p>
         </li>
 
-        {/* <li>
-            <strong>Children’s Privacy</strong>
-            <p>
-              The Site and the Service are not directed to anyone under the age
-              of 13. The Site does not knowingly collect or solicit information
-              from anyone under the age of 13, or allow anyone under the age of
-              13 to sign up for the Service. In the event that we learn that we
-              have gathered personal information from anyone under the age of 13
-              without the consent of a parent or guardian, we will delete that
-              information as soon as possible. If you believe we have collected
-              such information, please contact us at [Company contact email
-              address].
-            </p>
-          </li> */}
+        <li>
+          <strong>Children’s Privacy</strong>
+          <p>
+            The privacy of children is of utmost importance to us. Our Service
+            is designed for use by children, and we are committed to complying
+            with the Children’s Online Privacy Protection Act (COPPA). We do not
+            collect personal information from children by default. When a child
+            uses our Service, we collect only the information that is reasonably
+            necessary for participation in the activities offered. The messages
+            sent through our Service are processed via third-party API providers
+            like OpenAI, but these messages are not used to build profiles of
+            children, are never used to train models, and may only be stored
+            transiently (up to 30 days) for the purpose of providing the
+            Service.
+          </p>
+
+          <p>As a parent or guardian, you have the right to:</p>
+          <ul>
+            <li>
+              Review the personal information we have collected from your child,
+              if any
+            </li>
+            <li>
+              Request that we delete any personal information we have collected
+            </li>
+            <li>
+              Refuse to allow any further collection or use of your child’s
+              information
+            </li>
+            <li>
+              Agree to the collection and use of information, while still not
+              allowing disclosure to third parties unless it’s part of the
+              service
+            </li>
+          </ul>
+
+          <p>
+            To exercise these rights or if you have any questions about our
+            children’s privacy practices, please contact us at
+            privacy@chatgpt4kids.com.
+          </p>
+        </li>
       </ol>
 
       <h2>HOW WE USE AND SHARE INFORMATION</h2>

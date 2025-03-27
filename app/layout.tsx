@@ -145,6 +145,20 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Katex HTML
+         *
+         * Note:
+         * also show mathml via e.g.:
+         * <style>{`.katex-mathml { position: relative !important;}`}</style>
+         */}
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css"
+          integrity="sha384-zh0CIslj+VczCZtlzBcjt5ppRcsAmDnRem7ESsYwWwg3m/OaJ2l4x7YBZl9Kxxib"
+          crossOrigin="anonymous"
+          fetchPriority="low"
+        />
+
         <Script
           // https://nextjs.org/docs/app/building-your-application/optimizing/scripts#inline-scripts
           // > Warning: An id property must be assigned for inline scripts in order for Next.js to track and optimize the script.

@@ -257,6 +257,9 @@
     @apply bg-blue-200 hover:bg-blue-300 dark:hover:bg-blue-400/50 dark:text-blue-50 dark:bg-blue-500/40;
 }
 
-.katex-html {
+/* we would use this if not using katex-html (and instead relying on the now-well-supported mathml in html)
+ * (See output: "htmlAndMathml", in rehypeKatex/"rehype-katex"
+ */
+/* .katex-html {
     @apply hidden;
-}
+} */

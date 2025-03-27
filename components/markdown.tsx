@@ -98,8 +98,24 @@ const components: Partial<Components> = {
   },
 };
 
-const remarkPlugins = [remarkGfm, remarkMath];
-const rehypePlugins = [rehypeKatex];
+type ReactMarkdownProps = Parameters<typeof ReactMarkdown>[0];
+
+type RemarkPluginsProp = NonNullable<ReactMarkdownProps["remarkPlugins"]>;
+const remarkPlugins: RemarkPluginsProp = [
+  //
+  remarkGfm,
+  remarkMath,
+];
+
+const rehypeKatexOpts: NonNullable<Parameters<typeof rehypeKatex>[0]> = {
+  output: "htmlAndMathml",
+};
+
+type RehypePluginsProp = NonNullable<ReactMarkdownProps["rehypePlugins"]>;
+const rehypePlugins: RehypePluginsProp = [
+  //
+  [rehypeKatex, rehypeKatexOpts],
+];
 
 // in nodejs, on my M1 macbook, reusing this saves ~5ms (~10ms -> ~5ms for .replaceAll(...))
 const latexRegexStateful = /(\\\((.+?)\\\)|\\\[(.+?)\\\])/gsu;

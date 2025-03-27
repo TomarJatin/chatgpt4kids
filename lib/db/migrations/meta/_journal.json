@@ -43,6 +43,20 @@
       "when": 1741821262762,
       "tag": "0005_nosy_white_tiger",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1743040531170,
+      "tag": "0006_serious_red_ghost",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1743041739305,
+      "tag": "0007_shallow_spitfire",
+      "breakpoints": true
     }
   ]
 }

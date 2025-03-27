@@ -12,8 +12,10 @@ import {
   document,
   type Suggestion,
   suggestion,
-  type Message,
+  type NewMessage,
+  type NewMessageUsage,
   message,
+  messageUsage,
   vote,
 } from './schema';
 import { ArtifactKind } from '@/components/artifact';
@@ -83,23 +85,28 @@ export async function updateUserStripeStatusPaid({
 }
 
 export async function saveChat({
-  id,
-  userId,
-  title,
+  chat: { id, userId, title },
+  usage,
 }: {
-  id: string;
-  userId: string;
-  title: string;
+  chat: {
+    id: string;
+    userId: string;
+    title: string;
+  };
+  usage: NewMessageUsage;
 }) {
   try {
-    return await db.insert(chat).values({
-      id,
-      createdAt: new Date(),
-      userId,
-      title,
+    await db.transaction(async (tx) => {
+      await tx.insert(chat).values({
+        id,
+        createdAt: new Date(),
+        userId,
+        title,
+      });
+      await tx.insert(messageUsage).values(usage);
     });
   } catch (error) {
-    console.error('Failed to save chat in database');
+    console.error("Failed to save chat in database");
     throw error;
   }
 }
@@ -139,11 +146,24 @@ export async function getChatById({ id }: { id: string }) {
   }
 }
 
-export async function saveMessages({ messages }: { messages: Array<Message> }) {
+export async function saveMessages({
+  messages,
+  usage,
+}: {
+  messages: NewMessage[];
+  usage?: NewMessageUsage;
+}) {
   try {
-    return await db.insert(message).values(messages);
+    if (usage) {
+      await db.transaction(async (tx) => {
+        await tx.insert(message).values(messages);
+        await tx.insert(messageUsage).values(usage);
+      });
+    } else {
+      await db.insert(message).values(messages);
+    }
   } catch (error) {
-    console.error('Failed to save messages in database', error);
+    console.error("Failed to save messages in database", error);
     throw error;
   }
 }

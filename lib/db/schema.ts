@@ -1,9 +1,10 @@
-import type { InferSelectModel } from 'drizzle-orm';
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import {
   pgTable,
   varchar,
   timestamp,
   json,
+  jsonb,
   uuid,
   text,
   primaryKey,
@@ -44,7 +45,27 @@ export const message = pgTable('Message', {
   createdAt: timestamp('createdAt').notNull(),
 });
 
+export const messageUsage = pgTable('MessageUsage', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+
+  // for efficiency, elide the unneeded fk constraint(s).
+  chatId: uuid('chatId').notNull(),
+  // .references(() => chat.id, {
+  //   onDelete: 'no action',
+  //   onUpdate: 'no action',
+  // }),
+
+  msgId: uuid('msgId'),
+
+  usage: jsonb('usage').notNull(),
+  category: text('category'),
+
+  // Note: createdAt shall share the msgId's createdAt.
+});
+
 export type Message = InferSelectModel<typeof message>;
+export type NewMessage = InferInsertModel<typeof message>;
+export type NewMessageUsage = InferInsertModel<typeof messageUsage>;
 
 export const vote = pgTable(
   'Vote',

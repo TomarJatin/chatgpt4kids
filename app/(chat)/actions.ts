@@ -21,20 +21,23 @@ export async function generateTitleFromUserMessage({
 }: {
   message: Message;
 }) {
-  const { text: title } = await generateText({
+  const { text: title, usage } = await generateText({
     model: myProvider.languageModel('title-model'),
-    system: `\n
-    - you will generate a short title based on the first message a user begins a conversation with
-    - ensure it is not more than 80 characters long
-    - the title should be a summary of the user's message
-    - do not use quotes or colons`,
+    system: `\
+- you will generate a short title based on the first message a user begins a conversation with
+- ensure it is not more than 80 characters long
+- the title should be a summary of the user's message
+- do not use quotes or colons`,
     prompt: JSON.stringify(message),
   });
 
-  return title;
+  return { title, usage };
 }
 
 export async function deleteTrailingMessages({ id }: { id: string }) {
+  // KNOWN BUG:
+  // if the first message fails, this will be undefined!, and `chatId: message.chatId,` will fail (throw).
+
   const [message] = await getMessageById({ id });
 
   await deleteMessagesByChatIdAfterTimestamp({

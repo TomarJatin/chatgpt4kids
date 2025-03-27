@@ -31,6 +31,16 @@ export const maxDuration = 60;
 
 export async function POST(request: Request) {
   try {
+    const authPromise = auth();
+    const jsonPromise = request.json();
+
+    const session = await authPromise;
+    if (!session || !session.user || !session.user.id) {
+      return new Response('Unauthorized', { status: 401 });
+    }
+    const userId = session.user.id;
+    const userPromise = getUserById(userId);
+
     const {
       id,
       messages,
@@ -39,35 +49,37 @@ export async function POST(request: Request) {
       id: string;
       messages: Array<Message>;
       selectedChatModel: string;
-    } = await request.json();
+    } = await jsonPromise;
+    const chatPromise = getChatById({ id });
 
-    const session = await auth();
-
-    if (!session || !session.user || !session.user.id) {
-      return new Response('Unauthorized', { status: 401 });
-    }
-
-    const { stripeStatusPaid } = await getUserById(session.user.id);
+    const { stripeStatusPaid } = await userPromise;
     if (!stripeStatusPaid) {
       return new Response("Stripe subscription required", { status: 401 });
     }
 
-    const userMessage = getMostRecentUserMessage(messages);
+    const chat = await chatPromise;
 
+    const userMessage = getMostRecentUserMessage(messages);
     if (!userMessage) {
       return new Response('No user message found', { status: 400 });
     }
 
-    const chat = await getChatById({ id });
-
     if (!chat) {
-      const title = await generateTitleFromUserMessage({
+      const { title, usage } = await generateTitleFromUserMessage({
         message: userMessage,
       });
 
-      await saveChat({ id, userId: session.user.id, title });
+      await saveChat({
+        chat: { id, userId, title },
+        usage: {
+          chatId: id,
+          msgId: userMessage.id,
+          category: 'chat-title',
+          usage,
+        },
+      });
     } else {
-      if (chat.userId !== session.user.id) {
+      if (chat.userId !== userId) {
         return new Response('Unauthorized', { status: 401 });
       }
     }
@@ -103,8 +115,9 @@ export async function POST(request: Request) {
               dataStream,
             }),
           },
-          onFinish: async ({ response, reasoning }) => {
-            if (session.user?.id) {
+          onFinish: async ({ response, reasoning, usage }) => {
+            console.info('onFinish', { usage });
+            {  // diff-keep
               try {
                 const sanitizedResponseMessages = sanitizeResponseMessages({
                   messages: response.messages,
@@ -121,6 +134,12 @@ export async function POST(request: Request) {
                       createdAt: new Date(),
                     };
                   }),
+                  usage: {
+                    chatId: id,
+                    msgId: userMessage.id,
+                    category: 'ai-sdk-chat',
+                    usage,
+                  },
                 });
               } catch (error) {
                 console.error('Failed to save chat');
@@ -158,14 +177,15 @@ export async function DELETE(request: Request) {
 
   const session = await auth();
 
-  if (!session || !session.user) {
+  if (!session || !session.user || !session.user.id) {
     return new Response('Unauthorized', { status: 401 });
   }
+  const userId = session.user.id;
 
   try {
     const chat = await getChatById({ id });
 
-    if (chat.userId !== session.user.id) {
+    if (chat.userId !== userId) {
       return new Response('Unauthorized', { status: 401 });
     }
 

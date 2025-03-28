@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
-import { and, asc, desc, eq, gt, gte, inArray } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, gte, inArray, isNull } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
@@ -113,10 +113,7 @@ export async function saveChat({
 
 export async function deleteChatById({ id }: { id: string }) {
   try {
-    await db.delete(vote).where(eq(vote.chatId, id));
-    await db.delete(message).where(eq(message.chatId, id));
-
-    return await db.delete(chat).where(eq(chat.id, id));
+    return await db.update(chat).set({ deletedAt: new Date() }).where(eq(chat.id, id));
   } catch (error) {
     console.error('Failed to delete chat by id from database');
     throw error;
@@ -128,7 +125,7 @@ export async function getChatsByUserId({ id }: { id: string }) {
     return await db
       .select()
       .from(chat)
-      .where(eq(chat.userId, id))
+      .where(and(eq(chat.userId, id), isNull(chat.deletedAt)))
       .orderBy(desc(chat.createdAt));
   } catch (error) {
     console.error('Failed to get chats by user from database');

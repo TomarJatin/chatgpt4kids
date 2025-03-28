@@ -29,6 +29,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
   }
 
+  if (chat.deletedAt) {
+    return notFound();
+  }
+
   const messagesFromDb = await getMessagesByChatId({
     id,
   });

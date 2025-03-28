@@ -57,6 +57,13 @@
       "when": 1743041739305,
       "tag": "0007_shallow_spitfire",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1743121064113,
+      "tag": "0008_acoustic_pixie",
+      "breakpoints": true
     }
   ]
 }

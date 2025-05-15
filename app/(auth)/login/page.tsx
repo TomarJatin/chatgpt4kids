@@ -36,7 +36,7 @@ export default function Page() {
       });
     } else if (state.status === 'success') {
       setIsSuccessful(true);
-      const callbackUrl = new URL(window.location.href).searchParams.get('callbackUrl');
+      const callbackUrl = '/select-persona';
       if (callbackUrl) {
         router.push(callbackUrl);
       } else {

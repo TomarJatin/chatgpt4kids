@@ -37,7 +37,7 @@ export default function Page() {
       toast({ type: 'success', description: 'Account created successfully!' });
 
       setIsSuccessful(true);
-      const callbackUrl = new URL(window.location.href).searchParams.get('callbackUrl');
+      const callbackUrl = '/select-persona';
       if (callbackUrl) {
         router.push(callbackUrl);
       } else {

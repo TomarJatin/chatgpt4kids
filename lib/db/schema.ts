@@ -15,6 +15,8 @@ import {
   primaryKey,
   foreignKey,
   check,
+  index,
+  unique,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -50,20 +52,39 @@ export const persona = pgTable(
       columns: [table.parentPersonaId],
       foreignColumns: [persona.id],
     }),
+    chk_parent_type: check(
+      'chk_parent_type',
+      sql`${table.type} = 'parent' AND ${table.parentPersonaId} IS NULL`
+    ),
+    idx_parent: index('idx_parent').on(table.parentPersonaId),
   })
 ) as unknown as ReturnType<typeof pgTable>;
 export type Persona = InferSelectModel<typeof persona>;
 export type NewPersona = InferInsertModel<typeof persona>;
 
 export const personaSettings = pgTable('PersonaSettings', {
-  personaId: uuid('personaId').primaryKey().notNull().references(() => persona.id),
-  topicRestriction: varchar('topicRestriction', { enum: ['low', 'medium', 'high'] })
-    .notNull()
-    .default('medium'),
-  filters: jsonb('filters').notNull().default(JSON.stringify({ violence: false, politics: false })),
+  personaId:    uuid('personaId').primaryKey().notNull().references(() => persona.id),
+  topicRestriction: integer('topicRestriction').notNull().default(50),
+  violenceFilterLevel: integer('violenceFilterLevel').notNull().default(0),
+  politicsFilterLevel: integer('politicsFilterLevel').notNull().default(0),
   homeworkMode: boolean('homeworkMode').notNull().default(false),
-  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
-});
+
+  wordFilteringEnabled: boolean('wordFilteringEnabled')
+    .notNull()
+    .default(false),
+
+  updatedAt:    timestamp('updatedAt').notNull().defaultNow(),
+}, (table) => ({
+  chk_violence_level: check(
+    'chk_violence_level',
+    sql`${table.violenceFilterLevel} BETWEEN 0 AND 100`
+  ),
+  chk_politics_level: check(
+    'chk_politics_level',
+    sql`${table.politicsFilterLevel} BETWEEN 0 AND 100`
+  ),
+}));
+
 export type PersonaSettings = InferSelectModel<typeof personaSettings>;
 
 export const wordFilter = pgTable('WordFilter', {
@@ -134,6 +155,8 @@ export const document = pgTable(
   },
   (table) => ({
     pk: primaryKey({ columns: [table.id, table.createdAt] }),
+    idx_user: index('idx_document_user').on(table.userId),
+    idx_created: index('idx_document_created').on(table.createdAt),
   })
 );
 export type Document = InferSelectModel<typeof document>;
@@ -141,7 +164,7 @@ export type Document = InferSelectModel<typeof document>;
 export const suggestion = pgTable(
   'Suggestion',
   {
-    id: uuid('id').notNull().defaultRandom(),
+    id: uuid('id').primaryKey().notNull().defaultRandom(),
     documentId: uuid('documentId').notNull(),
     documentCreatedAt: timestamp('documentCreatedAt').notNull(),
     originalText: text('originalText').notNull(),
@@ -152,11 +175,14 @@ export const suggestion = pgTable(
     createdAt: timestamp('createdAt').notNull(),
   },
   (table) => ({
-    pk: primaryKey({ columns: [table.id] }),
     documentRef: foreignKey({
       columns: [table.documentId, table.documentCreatedAt],
       foreignColumns: [document.id, document.createdAt],
+      name: 'fk_suggestion_document',
     }),
+    idx_document: index('idx_suggestion_document').on(table.documentId),
+    idx_user: index('idx_suggestion_user').on(table.userId),
+    idx_created: index('idx_suggestion_created').on(table.createdAt),
   })
 );
 export type Suggestion = InferSelectModel<typeof suggestion>;
@@ -184,7 +210,9 @@ export const usageReport = pgTable(
     createdAt: timestamp('createdAt').notNull().defaultNow(),
   },
   (table) => ({
-    ux: primaryKey({ columns: [table.personaId, table.date] }),
+    ux: unique('ux_usage_report_persona_date').on(table.personaId, table.date),
+    idx_date: index('idx_usage_report_date').on(table.date),
+    idx_persona: index('idx_usage_report_persona').on(table.personaId),
   })
 );
 export type UsageReport = InferSelectModel<typeof usageReport>;
@@ -192,6 +220,8 @@ export type UsageReport = InferSelectModel<typeof usageReport>;
 export const topic = pgTable('Topic', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   name: varchar('name', { length: 64 }).notNull(),
+  deletedAt: timestamp('deletedAt'),
+  updatedAt: timestamp('updatedAt').notNull().defaultNow(),
 });
 export type Topic = InferSelectModel<typeof topic>;
 
@@ -201,6 +231,7 @@ export const chatTopic = pgTable(
     chatId: uuid('chatId').notNull().references(() => chat.id),
     topicId: uuid('topicId').notNull().references(() => topic.id),
     relevanceScore: integer('relevanceScore').notNull().default(0),
+    updatedAt: timestamp('updatedAt').notNull().defaultNow(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.chatId, table.topicId] }),
@@ -220,10 +251,17 @@ export const favoriteTopic = pgTable(
 );
 export type FavoriteTopic = InferSelectModel<typeof favoriteTopic>;
 
-export const educationalSuggestion = pgTable('EducationalSuggestion', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
-  personaId: uuid('personaId').notNull().references(() => persona.id),
-  suggestion: text('suggestion').notNull(),
-  createdAt: timestamp('createdAt').notNull().defaultNow(),
-});
+export const educationalSuggestion = pgTable(
+  'EducationalSuggestion',
+  {
+    id: uuid('id').primaryKey().notNull().defaultRandom(),
+    personaId: uuid('personaId').notNull().references(() => persona.id),
+    suggestion: text('suggestion').notNull(),
+    createdAt: timestamp('createdAt').notNull().defaultNow(),
+  },
+  (table) => ({
+    idx_persona: index('idx_educational_suggestion_persona').on(table.personaId),
+    idx_created: index('idx_educational_suggestion_created').on(table.createdAt),
+  })
+);
 export type EducationalSuggestion = InferSelectModel<typeof educationalSuggestion>;

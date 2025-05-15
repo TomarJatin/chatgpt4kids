@@ -2,7 +2,7 @@
 import { ChevronUp } from 'lucide-react';
 import Image from 'next/image';
 import type { User } from 'next-auth';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 
 import { match } from 'ts-pattern';
@@ -19,12 +19,21 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { PinDialog } from '@/components/ui/pinDialog';
+import { useState } from 'react';
+
 
 export function SidebarUserNav({ user }: { user: User }) {
+  const { data: session } = useSession();
   const { setTheme, theme } = useTheme();
 
+  const [pinOpen, setPinOpen] = useState(false);
+  const personaId = session?.user?.parentPersonaId as string;
+
+
   return (
-    <SidebarMenu>
+    <>
+      <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -72,6 +81,18 @@ export function SidebarUserNav({ user }: { user: User }) {
             >
               {`Dark mode (${theme === 'system' ? 'auto' : theme})`}
             </DropdownMenuItem>
+
+
+            <DropdownMenuItem
+                onSelect={(ev) => {
+                  ev.preventDefault();
+                  setPinOpen(true);
+                }}
+                className="cursor-pointer"
+              >
+                Parent Mode
+              </DropdownMenuItem>
+
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <button
@@ -90,5 +111,13 @@ export function SidebarUserNav({ user }: { user: User }) {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
+
+      <PinDialog
+        open={pinOpen}
+        onOpenChange={setPinOpen}
+        mode="verify"
+        personaId={personaId}
+      />
+    </>    
   );
 }

@@ -1,13 +1,15 @@
 import { compare } from 'bcrypt-ts';
 import NextAuth, { type User, type Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-
-import { getUser } from '@/lib/db/queries';
+import type { JWT } from "next-auth/jwt";
+import { getUser,getPersonasByUserId, createPersona } from '@/lib/db/queries';
 
 import { authConfig } from './auth.config';
+import { generateUUID } from '@/lib/utils';
+
 
 interface ExtendedSession extends Session {
-  user: User;
+  user: User & { parentPersonaId?: string | null } ;
 }
 
 export const {
@@ -31,9 +33,36 @@ export const {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({
+      token,
+      user,
+    }): Promise<JWT> {
+      // if we have a freshly signed-in user, record their ID
       if (user) {
-        token.id = user.id;
+        token.id = user.id
+      }
+
+      // once we know who they are, ensure they have a parent persona
+      if (token.id) {
+        let personas = await getPersonasByUserId(token.id as string)
+        let parent = personas.find(
+          (p) => p.type === 'parent' && p.parentPersonaId === null
+        )
+
+        if (!parent) {
+          // auto-create default parent
+          parent = await createPersona({
+            id: generateUUID(),
+            userId: token.id as string,
+            displayName: 'Parent',
+            type: 'parent',
+            avatar: null,
+            pinHash: null,
+            parentPersonaId: null,
+          })
+        }
+
+        token.parentPersonaId = (parent && typeof parent.id === 'string') ? parent.id : null;
       }
 
       return token;
@@ -47,6 +76,7 @@ export const {
     }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.parentPersonaId = token.parentPersonaId as string
       }
 
       return session;

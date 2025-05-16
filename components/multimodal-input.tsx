@@ -28,6 +28,7 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { SuggestedActions } from "./suggested-actions";
 import equal from "fast-deep-equal";
+import { InappropriateContentDialog } from "./inappropriate-content-dialog";
 
 function PureMultimodalInput({
   chatId,
@@ -68,6 +69,10 @@ function PureMultimodalInput({
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
+  const [validatingMessage, setValidatingMessage] = useState(false);
+  const [inappropriateContentDialogOpen, setInappropriateContentDialogOpen] = useState(false);
+  const [contentFilterReason, setContentFilterReason] = useState<'violence' | 'politics' | 'wordFilter' | undefined>();
+  const [matchedWord, setMatchedWord] = useState<string | undefined>();
 
   // Check if this is homework mode
   const isHomeworkMode = selectedChatModel === "chat-model-homework";
@@ -121,21 +126,62 @@ function PureMultimodalInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
-  const submitForm = useCallback(() => {
-    window.history.replaceState({}, "", `/chat/${chatId}`);
+  // Validate the user message for inappropriate content
+  const validateUserMessage = async (messageText: string): Promise<boolean> => {
+    if (!messageText.trim()) return true;
+    
+    try {
+      setValidatingMessage(true);
+      
+      const response = await fetch('/api/validate-message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: messageText }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to validate message');
+      }
+      
+      const { allowed, reason, matched } = await response.json();
+      
+      if (!allowed) {
+        setContentFilterReason(reason);
+        setMatchedWord(matched);
+        setInappropriateContentDialogOpen(true);
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error validating message:', error);
+      // Default to allowing the message in case of an error with the validation service
+      return true;
+    } finally {
+      setValidatingMessage(false);
+    }
+  };
 
-    handleSubmit(undefined, {
-      experimental_attachments: attachments,
-    });
+  const submitForm = useCallback(async () => {
+    if (await validateUserMessage(input)) {
+      window.history.replaceState({}, "", `/chat/${chatId}`);
 
-    setAttachments([]);
-    setLocalStorageInput("");
-    resetHeight();
+      handleSubmit(undefined, {
+        experimental_attachments: attachments,
+      });
 
-    if (width && width > 768) {
-      textareaRef.current?.focus();
+      setAttachments([]);
+      setLocalStorageInput("");
+      resetHeight();
+
+      if (width && width > 768) {
+        textareaRef.current?.focus();
+      }
     }
   }, [
+    input,
     attachments,
     handleSubmit,
     setAttachments,
@@ -290,9 +336,17 @@ function PureMultimodalInput({
             input={input}
             submitForm={submitForm}
             uploadQueue={uploadQueue}
+            validatingMessage={validatingMessage}
           />
         )}
       </div>
+      
+      <InappropriateContentDialog
+        open={inappropriateContentDialogOpen}
+        onOpenChange={setInappropriateContentDialogOpen}
+        reason={contentFilterReason}
+        matched={matchedWord}
+      />
     </div>
   );
 }
@@ -369,10 +423,12 @@ function PureSendButton({
   submitForm,
   input,
   uploadQueue,
+  validatingMessage,
 }: {
   submitForm: () => void;
   input: string;
   uploadQueue: Array<string>;
+  validatingMessage?: boolean;
 }) {
   return (
     <Button
@@ -382,7 +438,7 @@ function PureSendButton({
         event.preventDefault();
         submitForm();
       }}
-      disabled={input.length === 0 || uploadQueue.length > 0}
+      disabled={input.length === 0 || uploadQueue.length > 0 || validatingMessage}
     >
       <ArrowUpIcon size={14} />
     </Button>

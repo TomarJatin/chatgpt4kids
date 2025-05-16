@@ -135,47 +135,118 @@ export async function POST(request: Request) {
             updateDocument: updateDocument({ session, dataStream }),
             requestSuggestions: requestSuggestions({ session, dataStream }),
           },
-          onFinish: async ({ response, reasoning, usage }) => {
-            try {
-              // sanitize SDK artifacts
-              const sanitized = sanitizeResponseMessages({ messages: response.messages, reasoning });
-              const finalMessages: typeof sanitized = [];
+          // onFinish: async ({ response, reasoning, usage }) => {
+          //   try {
+          //     // sanitize SDK artifacts
+          //     const sanitized = sanitizeResponseMessages({ messages: response.messages, reasoning });
+          //     const finalMessages: typeof sanitized = [];
 
-              for (const msg of sanitized) {
-                if (msg.role === 'assistant') {
-                  const text = typeof msg.content === 'string'
-                    ? msg.content
-                    : msg.content.map((c: any) => ('text' in c ? c.text : '')).join('');
-                  const { message: filtered, wasFiltered, filterReason } =
-                    postProcessLLMResponse(text, settings!, customWords);
-                  if (wasFiltered) {
-                    await flagMessage({
-                      messageId: msg.id,
-                      flaggedByPersonaId: personaId,
-                      reason: filterReason!,
-                    });
-                  }
-                  finalMessages.push({ ...msg, content: filtered });
-                } else {
-                  finalMessages.push(msg);
-                }
-              }
+          //     for (const msg of sanitized) {
+          //       if (msg.role === 'assistant') {
+          //         const text = typeof msg.content === 'string'
+          //           ? msg.content
+          //           : msg.content.map((c: any) => ('text' in c ? c.text : '')).join('');
+          //         const { message: filtered, wasFiltered, filterReason } =
+          //           postProcessLLMResponse(text, settings!, customWords);
+          //         if (wasFiltered) {
+          //           await flagMessage({
+          //             messageId: msg.id,
+          //             flaggedByPersonaId: personaId,
+          //             reason: filterReason!,
+          //           });
+          //         }
+          //         finalMessages.push({ ...msg, content: filtered });
+          //       } else {
+          //         finalMessages.push(msg);
+          //       }
+          //     }
 
-              // persist assistant/tool messages
-              await saveMessages({
-                messages: finalMessages.map((m) => ({
-                  id: m.id,
-                  chatId: id,
-                  role: m.role,
-                  content: m.content,
-                  createdAt: new Date(),
-                })),
-                usage: { chatId: id, msgId: userMessage.id, category: 'ai-sdk-chat', usage },
-              });
-            } catch (err) {
-              console.error('onFinish error:', err);
-            }
-          },
+          //     // persist assistant/tool messages
+          //     await saveMessages({
+          //       messages: finalMessages.map((m) => ({
+          //         id: m.id,
+          //         chatId: id,
+          //         role: m.role,
+          //         content: m.content,
+          //         createdAt: new Date(),
+          //       })),
+          //       usage: { chatId: id, msgId: userMessage.id, category: 'ai-sdk-chat', usage },
+          //     });
+          //   } catch (err) {
+          //     console.error('onFinish error:', err);
+          //   }
+          // },
+
+          // … inside your createDataStreamResponse onFinish …
+onFinish: async ({ response, reasoning, usage }) => {
+  try {
+    // 1) sanitize and build finalMessages
+    const sanitized = sanitizeResponseMessages({ messages: response.messages, reasoning });
+    const finalMessages: Array<{ id: string; role: string; content: any }> = [];
+    const flags: Array<{ messageId: string; reason: 'violence'|'politics'|'wordFilter' }> = [];
+
+    for (const msg of sanitized) {
+      if (msg.role === 'assistant') {
+        const text = typeof msg.content === 'string'
+          ? msg.content
+          : msg.content.map((c: any) => ('text' in c ? c.text : '')).join('');
+
+        const { message: filtered, wasFiltered, filterReason } =
+          postProcessLLMResponse(text, settings!, customWords);
+        
+        finalMessages.push({
+          id:    msg.id,
+          role:  msg.role,
+          content: filtered,
+        });
+
+        if (wasFiltered && filterReason) {
+          // buffer the flag until *after* saving
+          flags.push({
+            messageId: msg.id,
+            reason: filterReason,
+          });
+        }
+      } else {
+        finalMessages.push({
+          id:      msg.id,
+          role:    msg.role,
+          content: msg.content,
+        });
+      }
+    }
+
+    // 2) save all assistant/tool messages first
+    await saveMessages({
+      messages: finalMessages.map((m) => ({
+        id:      m.id,
+        chatId:  id,
+        role:    m.role,
+        content: m.content,
+        createdAt: new Date(),
+      })),
+      usage: {
+        chatId: id,
+        msgId:  userMessage.id,
+        category: 'ai-sdk-chat',
+        usage,
+      },
+    });
+
+    // 3) now it’s safe to flag — these message IDs exist in Message table
+    for (const { messageId, reason } of flags) {
+      await flagMessage({
+        messageId,
+        flaggedByPersonaId: personaId,
+        reason,
+      });
+    }
+  } catch (err) {
+    console.error('onFinish error:', err);
+  }
+},
+
+
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,
             functionId: 'stream-text',

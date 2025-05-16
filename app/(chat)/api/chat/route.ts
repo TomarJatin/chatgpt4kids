@@ -39,6 +39,7 @@ export async function POST(request: Request) {
       return new Response('Unauthorized', { status: 401 });
     }
     const userId = session.user.id;
+    const personaId = session.user.parentPersonaId;
     const userPromise = getUserById(userId);
 
     const {
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
       });
 
       await saveChat({
-        chat: { id, userId, title },
+        chat: { id, title, userId, personaId: personaId || '' },
         usage: {
           chatId: id,
           msgId: userMessage.id,
@@ -79,7 +80,7 @@ export async function POST(request: Request) {
         },
       });
     } else {
-      if (chat.userId !== userId) {
+      if (chat.personaId !== personaId) {
         return new Response('Unauthorized', { status: 401 });
       }
     }
@@ -180,12 +181,13 @@ export async function DELETE(request: Request) {
   if (!session || !session.user || !session.user.id) {
     return new Response('Unauthorized', { status: 401 });
   }
-  const userId = session.user.id;
+
+  const personaId = searchParams.get('personaId');
 
   try {
     const chat = await getChatById({ id });
 
-    if (chat.userId !== userId) {
+    if (chat.personaId !== personaId) {
       return new Response('Unauthorized', { status: 401 });
     }
 
@@ -198,3 +200,4 @@ export async function DELETE(request: Request) {
     });
   }
 }
+

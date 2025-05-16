@@ -48,6 +48,8 @@ export function PinDialog({
     }
   }, [open])
 
+
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
@@ -63,14 +65,17 @@ export function PinDialog({
         mode === 'set'
           ? '/api/parent/profile'
           : '/api/parent/verify-pin',
+        mode === 'set' ?  
         {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin }),
+        } : {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body:
-            mode === 'set'
-              ? JSON.stringify({ pin })
-              : JSON.stringify({ personaId, pin }),
+          body: JSON.stringify({ personaId, pin }),
         }
       )
 

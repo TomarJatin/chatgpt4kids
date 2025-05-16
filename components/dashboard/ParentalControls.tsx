@@ -1,13 +1,20 @@
 'use client'
 
 import React, { useEffect, useState, FormEvent } from 'react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { Slider } from '@/components/ui/slider'
 import { Button } from '@/components/ui/button'
 import { LoaderIcon } from '@/components/icons'
 import type { PersonaSettings } from '@/lib/db/schema'
+import { Input } from '@/components/ui/input'
 
 interface Props {
   childId: string
@@ -16,12 +23,14 @@ interface Props {
 
 type Settings = {
   personaId:            string
-  topicRestriction:     number    // 0–100
-  violenceFilterLevel:  number    // 0–100
-  politicsFilterLevel:  number    // 0–100
+  topicRestriction:     0 | 1 | 2
+  violenceFilterLevel:  0 | 1 | 2
+  politicsFilterLevel:  0 | 1 | 2
   homeworkMode:         boolean
   wordFilteringEnabled: boolean
 }
+
+const FILTER_LABELS = ['Low', 'Medium', 'High'] as const
 
 function ToggleRow({
   label,
@@ -62,6 +71,7 @@ export default function ParentalControls({ childId, childName }: Props) {
   const [originalFilters, setOriginalFilters] = useState<{ id: string; word: string }[]>([])
   const [wfError, setWfError]                 = useState<string | null>(null)
   const [wfSaving, setWfSaving]               = useState(false)
+  const [newWord, setNewWord]                 = useState('')
 
   // Load settings
   useEffect(() => {
@@ -70,11 +80,11 @@ export default function ParentalControls({ childId, childName }: Props) {
       .then((json: PersonaSettings & any) => {
         setSettings({
           personaId:            json.personaId,
-          topicRestriction:     (json.topicRestriction ?? json.topicRestrictionPct) as number,
-          violenceFilterLevel:  json.violenceFilterLevel  as number,
-          politicsFilterLevel:  json.politicsFilterLevel  as number,
-          homeworkMode:         json.homeworkMode          as boolean,
-          wordFilteringEnabled: json.wordFilteringEnabled  as boolean,
+          topicRestriction:     json.topicRestriction as 0 | 1 | 2,
+          violenceFilterLevel:  json.violenceFilterLevel as 0 | 1 | 2,
+          politicsFilterLevel:  json.politicsFilterLevel as 0 | 1 | 2,
+          homeworkMode:         json.homeworkMode as boolean,
+          wordFilteringEnabled: json.wordFilteringEnabled as boolean,
         })
       })
       .catch(() => setError('Failed to load settings'))
@@ -96,7 +106,7 @@ export default function ParentalControls({ childId, childName }: Props) {
     if (!settings) return
     setSettings({
       ...settings,
-      topicRestriction:     50,
+      topicRestriction:     0,
       violenceFilterLevel:  0,
       politicsFilterLevel:  0,
       homeworkMode:         false,
@@ -114,21 +124,15 @@ export default function ParentalControls({ childId, childName }: Props) {
         method:      'PUT',
         credentials: 'include',
         headers:     { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topicRestriction:     settings.topicRestriction,
-          violenceFilterLevel:  settings.violenceFilterLevel,
-          politicsFilterLevel:  settings.politicsFilterLevel,
-          homeworkMode:         settings.homeworkMode,
-          wordFilteringEnabled: settings.wordFilteringEnabled,
-        }),
+        body: JSON.stringify(settings),
       })
       if (!res.ok) throw new Error('Save failed')
       const updated = (await res.json()) as PersonaSettings & any
       setSettings({
         personaId:            updated.personaId,
-        topicRestriction:     updated.topicRestriction,
-        violenceFilterLevel:  updated.violenceFilterLevel,
-        politicsFilterLevel:  updated.politicsFilterLevel,
+        topicRestriction:     updated.topicRestriction as 0 | 1 | 2,
+        violenceFilterLevel:  updated.violenceFilterLevel as 0 | 1 | 2,
+        politicsFilterLevel:  updated.politicsFilterLevel as 0 | 1 | 2,
         homeworkMode:         updated.homeworkMode,
         wordFilteringEnabled: updated.wordFilteringEnabled,
       })
@@ -180,68 +184,38 @@ export default function ParentalControls({ childId, childName }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Content Restrictions </CardTitle>
-        <CardDescription>Control what types of content {childName} can access</CardDescription>
+        <CardTitle>Content Restrictions</CardTitle>
+        <CardDescription>
+          Control what types of content {childName} can access
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Sliders */}
-          <div className="space-y-6">
-            {/* Topic */}
-            <div className="space-y-1">
-              <h4 className="font-medium text-gray-800 dark:text-gray-200">Topic Restriction</h4>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Content Restriction Level</p>
-              <Slider
-                value={[settings.topicRestriction]}
-                onValueChange={([v]) => setSettings(s => ({ ...s!, topicRestriction: v }))}
-                min={0}
-                max={100}
-                step={1}
-              />
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                {settings.topicRestriction === 0? 'Off': `${settings.topicRestriction}%`}
-              </p>
-            </div>
-            {/* Violence */}
-            <div className="space-y-1">
-              <h4 className="font-medium text-gray-800 dark:text-gray-200">Filter Violence</h4>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Block violent content</p>
-              <Slider
-                value={[settings.violenceFilterLevel]}
-                onValueChange={([v]) => setSettings(s => ({ ...s!, violenceFilterLevel: v }))}
-                min={0}
-                max={100}
-                step={1}
-              />
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                {settings.violenceFilterLevel === 0? 'Off': `${settings.violenceFilterLevel}%`}
-              </p>
-            </div>
-            {/* Politics */}
-            <div className="space-y-1">
-              <h4 className="font-medium text-gray-800 dark:text-gray-200">Filter Politics</h4>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Block political content</p>
-              <Slider
-                value={[settings.politicsFilterLevel]}
-                onValueChange={([v]) => setSettings(s => ({ ...s!, politicsFilterLevel: v }))}
-                min={0}
-                max={100}
-                step={1}
-              />
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                {settings.politicsFilterLevel === 0? 'Off': `${settings.politicsFilterLevel}%`}
-              </p>
-            </div>
-            {/* Homework Mode */}
-            <ToggleRow
-              label="Homework Mode Only"
-              desc="Only allows educational content related to schoolwork"
-              checked={settings.homeworkMode}
-              onChange={v => setSettings(s => ({ ...s!, homeworkMode: v }))}
-              disabled={saving}
-            />
-          </div>
+          {/* Three‐step Sliders */}
+          {(['Topic Restriction','Filter Violence','Filter Politics'] as const).map((label, idx) => {
+            const key = idx === 0
+              ? 'topicRestriction'
+              : idx === 1
+                ? 'violenceFilterLevel'
+                : 'politicsFilterLevel'
+            const value = settings[key]
+            return (
+              <div key={key} className="space-y-1">
+                <h4 className="font-medium text-gray-800 dark:text-gray-200">{label}</h4>
+                <Slider
+                  value={[value]}
+                  onValueChange={([v]) => setSettings(s => ({ ...s!, [key]: v }))}
+                  min={0}
+                  max={2}
+                  step={1}
+                />
+                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+                  {FILTER_LABELS[value]}
+                </p>
+              </div>
+            )
+          })}
 
           <Separator />
 
@@ -251,7 +225,7 @@ export default function ParentalControls({ childId, childName }: Props) {
               Reset
             </Button>
             <Button type="submit" disabled={saving}>
-              {saving ? <><LoaderIcon size={20} />Saving…</> : 'Save Changes'}
+              {saving ? <><LoaderIcon size={20} /> Saving…</> : 'Save Changes'}
             </Button>
           </div>
 
@@ -266,27 +240,53 @@ export default function ParentalControls({ childId, childName }: Props) {
               checked={settings.wordFilteringEnabled}
               onChange={v => setSettings(s => ({ ...s!, wordFilteringEnabled: v }))}
             />
+
+            {/* Input for adding new filter words */}
+            <Input
+              placeholder="Add word to filter"
+              value={newWord}
+              onChange={e => setNewWord(e.currentTarget.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  const w = newWord.trim()
+                  if (w && !wordFilters.includes(w)) {
+                    setWordFilters(ws => [...ws, w])
+                  }
+                  setNewWord('')
+                }
+              }}
+            />
+
             <div className="flex flex-wrap gap-2">
               {wordFilters.map(w => (
-                <span key={w} className="flex items-center bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-lg px-3 py-1 text-sm">
+                <span
+                  key={w}
+                  className="flex items-center bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-lg px-3 py-1 text-sm"
+                >
                   {w}
                   <button
                     type="button"
-                    onClick={() => setWordFilters(wordFilters.filter(x => x !== w))}
+                    onClick={() => setWordFilters(ws => ws.filter(x => x !== w))}
                     className="ml-2 hover:text-red-600 dark:hover:text-red-400"
                     disabled={wfSaving}
-                  >×</button>
+                  >
+                    ×
+                  </button>
                 </span>
               ))}
             </div>
+
             <div className="flex justify-between items-center">
               <Button variant="outline" size="sm" onClick={() => setWordFilters([])} disabled={wfSaving}>
                 Reset
               </Button>
               <Button onClick={saveWordFilters} disabled={wfSaving}>
-                {wfSaving ? <><LoaderIcon size={20}/>Saving…</> : 'Save Changes'}
+                {wfSaving ? <><LoaderIcon size={20}/> Saving…</> : 'Save Changes'}
               </Button>
             </div>
+
+            {wfError && <p className="text-red-600 dark:text-red-400">{wfError}</p>}
           </div>
         </form>
       </CardContent>

@@ -62,11 +62,14 @@ export const persona = pgTable(
 export type Persona = InferSelectModel<typeof persona>;
 export type NewPersona = InferInsertModel<typeof persona>;
 
+export const filterLevelEnum = pgEnum('filter_level_enum', ['low', 'medium', 'high'])
+
 export const personaSettings = pgTable('PersonaSettings', {
   personaId:    uuid('personaId').primaryKey().notNull().references(() => persona.id),
-  topicRestriction: integer('topicRestriction').notNull().default(50),
-  violenceFilterLevel: integer('violenceFilterLevel').notNull().default(0),
-  politicsFilterLevel: integer('politicsFilterLevel').notNull().default(0),
+  topicRestriction:    filterLevelEnum('topicRestriction').notNull().default('medium'),
+  violenceFilterLevel: filterLevelEnum('violenceFilterLevel').notNull().default('low'),
+  politicsFilterLevel: filterLevelEnum('politicsFilterLevel').notNull().default('low'),
+
   homeworkMode: boolean('homeworkMode').notNull().default(false),
 
   wordFilteringEnabled: boolean('wordFilteringEnabled')

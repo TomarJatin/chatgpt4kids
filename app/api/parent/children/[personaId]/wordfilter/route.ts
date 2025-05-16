@@ -56,7 +56,7 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { childPersonaId: string } }
+  { params }: { params: { personaId: string } }
 ) {
   try {
     const session = await auth()
@@ -67,9 +67,9 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { childPersonaId } = params
+    const { personaId } = await params
 
-    if (!(await authorize(childPersonaId, parentId, userId))) {
+    if (!(await authorize(personaId, parentId, userId))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -79,7 +79,7 @@ export async function POST(
     }
 
     const added = await addWordFilter({
-      personaId: childPersonaId,
+      personaId: personaId,
       word: word.trim(),
     })
 

@@ -1,4 +1,6 @@
 import { ArtifactKind } from '@/components/artifact';
+import { PersonaSettings } from '@/lib/db/schema';
+
 
 export const artifactsPrompt = `
 Artifacts is a special user interface mode that helps users with writing, editing, and other content creation tasks. When artifact is open, it is on the right side of the screen, while the conversation is on the left side. When creating or updating documents, changes are reflected in real-time on the artifacts and visible to the user.
@@ -189,3 +191,33 @@ Improve the following spreadsheet based on the given prompt.
 ${currentContent}
 `
         : '';
+
+
+
+// PARENTAL CONTROLS PROMPT
+
+export function systemPromptWithGuardrails(
+  selectedChatModel: string,
+  settings?: PersonaSettings
+) {
+  const base = systemPrompt({ selectedChatModel });
+
+  if (!settings) {
+    return base;
+  }
+
+  const tier = (level: 'low' | 'medium' | 'high') => level.toUpperCase();
+  const safety = `
+  [Parental Controls Active]
+    - Violence: ${tier(settings.violenceFilterLevel)}
+    - Politics: ${tier(settings.politicsFilterLevel)}
+    - Topics:   ${tier(settings.topicRestriction)}
+    - WordFilter: ${settings.wordFilteringEnabled ? 'ON' : 'OFF'}
+
+  If you detect disallowed content, refuse or say:
+    “Let’s talk about something else!”
+  `;
+
+  // You can choose prepend or append. Append is usually safest.
+  return `${base}\n\n${safety}`;
+}

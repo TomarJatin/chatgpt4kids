@@ -170,7 +170,7 @@ export default function ParentDashboardPage() {
             disabled={!activeChild}
             onClick={() => {
                if (activeChild) {
-                 router.push(`/chat/${activeChild.id}`)
+                 router.push(`/chat/new`)
                }
              }}
           >

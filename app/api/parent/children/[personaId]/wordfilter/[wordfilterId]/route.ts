@@ -22,17 +22,17 @@ async function authorize(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { childPersonaId: string; wordFilterId: string } }
+  { params }: { params: { personaId: string; wordFilterId: string } }
 ) {
   try {
     // grab session info
     const session      = await auth()
     const userId       = session?.user?.id ?? null
     const parentId     = session?.user?.parentPersonaId ?? null
-    const { childPersonaId, wordFilterId } = params
+    const { personaId, wordFilterId } = await params
 
     // check access
-    if (!(await authorize(childPersonaId, parentId, userId))) {
+    if (!(await authorize(personaId, parentId, userId))) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

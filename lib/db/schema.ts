@@ -104,7 +104,7 @@ export const chat = pgTable('Chat', {
   createdAt: timestamp('createdAt').notNull(),
   title: text('title').notNull(),
   userId: uuid('userId').notNull().references(() => user.id),
-  personaId: uuid('personaId').notNull().references(() => persona.id),
+  personaId: uuid('personaId').references(() => persona.id),
   visibility: varchar('visibility', { enum: ['public', 'private'] })
     .notNull()
     .default('private'),
@@ -165,14 +165,16 @@ export type Document = InferSelectModel<typeof document>;
 export const suggestion = pgTable(
   'Suggestion',
   {
-    id: uuid('id').primaryKey().notNull().defaultRandom(),
+    id: uuid('id').notNull().defaultRandom(),
     documentId: uuid('documentId').notNull(),
     documentCreatedAt: timestamp('documentCreatedAt').notNull(),
     originalText: text('originalText').notNull(),
     suggestedText: text('suggestedText').notNull(),
     description: text('description'),
     isResolved: boolean('isResolved').notNull().default(false),
-    userId: uuid('userId').notNull().references(() => user.id),
+    userId: uuid('userId')
+      .notNull()
+      .references(() => user.id),
     createdAt: timestamp('createdAt').notNull(),
   },
   (table) => ({
@@ -181,8 +183,9 @@ export const suggestion = pgTable(
       columns: [table.documentId, table.documentCreatedAt],
       foreignColumns: [document.id, document.createdAt],
     }),
-  })
+  }),
 );
+
 export type Suggestion = InferSelectModel<typeof suggestion>;
 
 export const flaggedMessage = pgTable('FlaggedMessage', {

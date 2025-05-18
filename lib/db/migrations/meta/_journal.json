@@ -71,6 +71,13 @@
       "when": 1747601914152,
       "tag": "0009_brief_shadowcat",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1747602986524,
+      "tag": "0010_needy_gambit",
+      "breakpoints": true
     }
   ]
 }

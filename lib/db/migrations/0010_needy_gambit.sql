@@ -87,8 +87,7 @@ CREATE TABLE IF NOT EXISTS "WordFilter" (
 	"createdAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "Suggestion" ADD PRIMARY KEY ("id");--> statement-breakpoint
-ALTER TABLE "Chat" ADD COLUMN "personaId" uuid NOT NULL;--> statement-breakpoint
+ALTER TABLE "Chat" ADD COLUMN "personaId" uuid;--> statement-breakpoint
 ALTER TABLE "Chat" ADD COLUMN "deletedAt" timestamp;--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "ChatTopic" ADD CONSTRAINT "ChatTopic_chatId_Chat_id_fk" FOREIGN KEY ("chatId") REFERENCES "public"."Chat"("id") ON DELETE no action ON UPDATE no action;

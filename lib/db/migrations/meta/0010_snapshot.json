@@ -1,5 +1,5 @@
 {
-  "id": "e9b546d8-7c78-46d4-b109-c10cf1d224c7",
+  "id": "261f3ab0-2e5f-4b7c-aa35-1b3a66876e3b",
   "prevId": "55681693-a4bf-4c79-ad5a-d09e4c448dd5",
   "version": "7",
   "dialect": "postgresql",
@@ -37,7 +37,7 @@
           "name": "personaId",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "visibility": {
           "name": "visibility",
@@ -728,7 +728,7 @@
         "id": {
           "name": "id",
           "type": "uuid",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true,
           "default": "gen_random_uuid()"
         },

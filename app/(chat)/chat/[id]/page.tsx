@@ -49,6 +49,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           selectedChatModel={DEFAULT_CHAT_MODEL}
           selectedVisibilityType={chat.visibility}
           isReadonly={session?.user?.id !== chat.userId}
+          childId={chat.personaId}
         />
         <DataStreamHandler id={id} />
       </>
@@ -63,6 +64,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         selectedChatModel={chatModelFromCookie.value}
         selectedVisibilityType={chat.visibility}
         isReadonly={session?.user?.id !== chat.userId}
+        childId={chat.personaId}
       />
       <DataStreamHandler id={id} />
     </>

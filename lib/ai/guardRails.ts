@@ -28,7 +28,7 @@ function findMatch(message: string, keywords: string[]): string | null {
 
 /** Word-lists by severity 0=LOW,1=MEDIUM,2=HIGH */
 function violenceList(level: 'low' | 'medium' | 'high'): string[]{
-    if (level === 'high') {
+  if (level === 'high') {
     return ['hit','fight','hurt','battle','war','weapon','gun','bomb','attack','kill','blood'];
   }
   if (level === 'medium') {

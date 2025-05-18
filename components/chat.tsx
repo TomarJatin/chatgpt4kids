@@ -20,12 +20,14 @@ export function Chat({
   selectedChatModel,
   selectedVisibilityType,
   isReadonly,
+  childId,
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedChatModel: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  childId?: string;
 }) {
   const { mutate } = useSWRConfig();
 
@@ -41,8 +43,9 @@ export function Chat({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel },
+    body: { id, selectedChatModel, childPersonaId: childId || '' },
     initialMessages,
+    // streamProtocol: 'text', 
     experimental_throttle: 100,
     sendExtraMessageFields: true,
     generateId: generateUUID,
@@ -52,6 +55,28 @@ export function Chat({
     onError: (error) => {
       console.error('error', error);
       toast.error(`An error occured, please try again! (${error.message})`);
+    },
+    onResponse: async (res) => {
+      const ct = res.headers.get('content-type') || '';
+      if (ct.includes('application/json')) {
+        try {
+          const data = await res.clone().json();
+          if (data?.blocked === true) {
+            // 1) stop the ongoing SDK stream
+            stop();
+    
+            // 2) render fallback bubble
+            append({
+              id: generateUUID(),
+              role: 'assistant',
+              content: data.message ?? "Let’s talk about something else!",
+            });
+          }
+        } catch {
+          // if it wasn’t our JSON, just ignore and let default streaming continue
+        }
+      }
+      // no return value — this must be void
     },
   });
 

@@ -79,6 +79,7 @@ export default function ParentDashboardPage() {
           return r.json() as Promise<ParentDashboard>
         })
         .then(data => {
+          // console.log('🌟 Fetched dashboard data:', data)
           setDashboard(data)
           setActiveChild(data.children[0] || null)
         })
@@ -170,7 +171,7 @@ export default function ParentDashboardPage() {
             disabled={!activeChild}
             onClick={() => {
                if (activeChild) {
-                 router.push(`/chat/new`)
+                 router.push(`/chat/new?childPersonaId=${activeChild.id}`)
                }
              }}
           >
@@ -211,7 +212,11 @@ export default function ParentDashboardPage() {
 
         {activeTab === 'reports' && activeChild && (
           <div className="space-y-8">
-            <UsageReports  childId={activeChild.id} />
+            <UsageReports
+              childId={activeChild.id}
+              childName={activeChild.displayName}
+              childAvatarUrl={activeChild.avatar}
+            />
             <ChatSummaries childId={activeChild.id} />
           </div>
         )}

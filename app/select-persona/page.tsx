@@ -65,7 +65,7 @@ export default function SelectPersonaPage() {
 
   function handleSelect(p: LivePersona) {
     if (p.type === 'child') {
-      router.push('/chat/new')
+      router.push(`/chat/new?childPersonaId=${p.id}`)
     } else {
       openPin(p, p.needsPin ? 'set' : 'verify')
     }

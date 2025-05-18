@@ -1,3 +1,4 @@
+
 'use client'
 
 import React, { useEffect, useState } from 'react'
@@ -17,7 +18,7 @@ type AnalyticsPayload = {
   educationalSuggestions: string[]
   chatSummary: string
   flaggedWords: string[]
-  interests: string[]
+  interests:    string[]
 }
 
 interface Props {
@@ -25,35 +26,42 @@ interface Props {
 }
 
 export default function ChatSummaries({ childId }: Props) {
-  const [data, setData] = useState<AnalyticsPayload[]>([])
+  const [data, setData]       = useState<AnalyticsPayload[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [date, setDate] = useState<string>(new Date().toISOString().slice(0,10))
+  const [error, setError]     = useState<string | null>(null)
+  const [date, setDate]       = useState<string>(new Date().toISOString().slice(0,10))
 
   useEffect(() => {
+    console.log('[ChatSummaries] Fetching for date:', date)
     setLoading(true)
     fetch(`/api/parent/analytics/${childId}?date=${date}`, { credentials: 'include' })
       .then(res => {
+        console.log('[ChatSummaries] HTTP status:', res.status)
         if (!res.ok) throw new Error('Failed to load summaries')
         return res.json() as Promise<AnalyticsPayload>
       })
       .then(payload => {
+        console.log('[ChatSummaries] payload:', payload)
         setData([payload])
         setError(null)
       })
       .catch(err => {
-        console.error(err)
+        console.error('[ChatSummaries] error:', err)
         setError(err.message)
       })
       .finally(() => setLoading(false))
   }, [childId, date])
 
+  // log the component's render state
+  console.log('[ChatSummaries] state → loading:', loading, 'error:', error, 'data:', data)
+
   if (loading) return <p className="text-gray-900 dark:text-gray-100">Loading summaries…</p>
   if (error)   return <p className="text-red-600 dark:text-red-400">{error}</p>
-  if (!data.length) return null
+  if (!data.length) return <p className="text-gray-700">No data for {date}</p>
+
 
   return (
-    <div className="space-y-8 ">
+    <div className="space-y-8">
       {/* Header with Date Picker */}
       <div className="flex items-center justify-between">
         <div>
@@ -84,9 +92,15 @@ export default function ChatSummaries({ childId }: Props) {
       {data.map((day, i) => (
         <Card key={i}>
           <CardContent className="space-y-6 mt-6">
+            {/* Date */}
             <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               {format(new Date(day.date), 'EEEE, MMMM d, yyyy')}
             </h3>
+
+            {/* ← One-line summary */}
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              {day.chatSummary}
+            </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Activity Overview */}
@@ -113,7 +127,7 @@ export default function ChatSummaries({ childId }: Props) {
                 <div className="flex flex-col space-y-2">
                   <span className="text-gray-800 dark:text-gray-200">Interests</span>
                   <div className="flex flex-wrap gap-2">
-                    {(day.interests ?? []).map((int, idx) => (
+                    {day.interests.map((int, idx) => (
                       <Badge key={idx}>{int}</Badge>
                     ))}
                   </div>
@@ -122,8 +136,8 @@ export default function ChatSummaries({ childId }: Props) {
                 <div className="flex flex-col space-y-2">
                   <span className="text-gray-800 dark:text-gray-200">Flagged Words</span>
                   <div className="flex flex-wrap gap-2">
-                    {(day.flaggedWords ?? []).length > 0 ? (
-                      (day.flaggedWords ?? []).map((w, idx) => (
+                    {day.flaggedWords.length > 0 ? (
+                      day.flaggedWords.map((w, idx) => (
                         <Badge key={idx} variant="destructive">
                           {w}
                         </Badge>

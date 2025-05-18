@@ -35,6 +35,13 @@ import {
 } from './schema';
 import { ArtifactKind } from '@/components/artifact';
 
+
+interface TopicData {
+  name: string;
+  relevance: number;
+}
+
+
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
@@ -523,6 +530,70 @@ export async function addChatTopic({ chatId, topicId, relevanceScore }: { chatId
   }
 }
 
+
+/**
+ * Processes and saves topics extracted from conversations
+ */
+export async function processExtractedTopics(
+  chatId: string,
+  extractedTopics: TopicData[]
+): Promise<void> {
+  for (const topicData of extractedTopics) {
+    // Find or create the topic
+    let topicId;
+    try {
+      // Search for existing topic with this name
+      const existingTopics = await db
+        .select()
+        .from(topic)
+        .where(sql`LOWER(${topic.name}) = LOWER(${topicData.name})`);
+      
+      if (existingTopics.length > 0) {
+        topicId = existingTopics[0].id;
+      } else {
+        // Create new topic
+        topicId = crypto.randomUUID();
+        await db.insert(topic).values({
+          id: topicId,
+          name: topicData.name,
+          updatedAt: new Date()
+        });
+      }
+      
+      // Check if there's an existing chat-topic relationship
+      const existingChatTopics = await db
+        .select()
+        .from(chatTopic)
+        .where(
+          and(
+            eq(chatTopic.chatId, chatId),
+            eq(chatTopic.topicId, topicId)
+          )
+        );
+      
+      const relevanceScore = topicData.relevance || 1;
+      
+      if (existingChatTopics.length > 0) {
+        // Update the existing relationship with highest relevance
+        await updateChatTopic({
+          chatId,
+          topicId,
+          relevanceScore: Math.max(relevanceScore, existingChatTopics[0].relevanceScore)
+        });
+      } else {
+        // Create a new relationship
+        await addChatTopic({
+          chatId,
+          topicId,
+          relevanceScore
+        });
+      }
+    } catch (error) {
+      console.error('Error saving topic:', error);
+    }
+  }
+}
+
 export async function updateChatTopic({ 
   chatId, 
   topicId, 
@@ -863,4 +934,203 @@ export async function updateChatVisiblityById({
     console.error('Failed to update chat visibility in database');
     throw error;
   }
+}
+
+
+export async function upsertDailyUsageReport({
+  personaId,
+  date,              // YYYY-MM-DD string
+  chatsStarted,
+  messagesSent,
+  wordsSent,
+}: {
+  personaId:       string
+  date:            string
+  chatsStarted:    number
+  messagesSent:    number
+  wordsSent:       number
+}) {
+  // 1) See if there's already a row for this persona+date
+  const [existing] = await db
+    .select()
+    .from(usageReport)
+    .where(
+      and(
+        eq(usageReport.personaId, personaId),
+        eq(usageReport.date, date),
+      ),
+    )
+
+  if (existing) {
+    // 2a) Update the existing row: add our new counts onto what's already there
+    await db
+      .update(usageReport)
+      .set({
+        chatsStarted: sql`${usageReport.chatsStarted} + ${chatsStarted}`,
+        messagesSent: sql`${usageReport.messagesSent} + ${messagesSent}`,
+        wordsSent:    sql`${usageReport.wordsSent} + ${wordsSent}`,
+      })
+      .where(
+        and(
+          eq(usageReport.personaId, personaId),
+          eq(usageReport.date, date),
+        ),
+      )
+  } else {
+    // 2b) Insert a fresh row
+    await db.insert(usageReport).values({
+      id:            crypto.randomUUID(),
+      personaId,
+      date,
+      chatsStarted,
+      messagesSent,
+      wordsSent,
+      createdAt:     new Date(),
+    })
+  }
+}
+
+// export async function getFlaggedWordsForPersonaInDateRange(
+//   personaId: string,
+//   start: Date,
+//   end:   Date
+// ): Promise<string[]> {
+//   const rows = await db
+//     .select({ details: flaggedMessage.details })
+//     .from(flaggedMessage)
+//     .where(
+//       and(
+//         eq(flaggedMessage.flaggedByPersonaId, personaId),
+//         gte(flaggedMessage.createdAt, start),
+//         lte(flaggedMessage.createdAt, end)
+//       )
+//     )
+//   return rows.map(r => r.details!).filter(Boolean)
+// }
+
+export async function getFlaggedWordsForPersonaInDateRange(
+  personaId: string,
+  start:     Date,
+  end:       Date
+): Promise<string[]> {
+  const rows = await db
+    .select({ reason: flaggedMessage.reason })
+    .from(flaggedMessage)
+    .where(
+      and(
+        eq(flaggedMessage.flaggedByPersonaId, personaId),
+        gte(flaggedMessage.createdAt, start),
+        lte(flaggedMessage.createdAt, end),
+      )
+    );
+
+  // now map over `reason` (never null)
+  return rows.map(r => r.reason);
+}
+
+
+export async function getInterestsForPersonaInDateRange(
+  personaId: string,
+  start: Date,
+  end:   Date
+): Promise<string[]> {
+  // placeholder: replace with your real table
+  // e.g. a PersonaInterest table
+  return []
+}
+
+/**
+ * How many messages did this child’s chats see in the time window?
+ */
+export async function getMessageCountForDateRange(
+  personaId: string,
+  start: Date,
+  end:   Date
+): Promise<number> {
+  const [row] = await db
+    .select({ cnt: sql<number>`count(${message.id})::int` })
+    .from(message)
+    .innerJoin(chat, eq(message.chatId, chat.id))
+    .where(and(
+      eq(chat.personaId, personaId),
+      gte(message.createdAt, start),
+      lte(message.createdAt, end)
+    ))
+
+  return row.cnt
+}
+
+/**
+ * Get every “child” persona in the system
+ */
+export async function getAllChildPersonas(): Promise<Persona[]> {
+  return db
+    .select()
+    .from(persona)
+    .where(eq(persona.type, 'child'))
+}
+
+/**
+ * How many new chats did this child start in the window?
+ */
+export async function getNewChatCountForDateRange(
+  personaId: string,
+  start: Date,
+  end:   Date
+): Promise<number> {
+  const [row] = await db
+    .select({ cnt: sql<number>`count(${chat.id})::int` })
+    .from(chat)
+    .where(and(
+      eq(chat.personaId, personaId),
+      gte(chat.createdAt, start),
+      lte(chat.createdAt, end)
+    ))
+
+  return row.cnt
+}
+
+/**
+ * Which chatIds saw at least one message in the window?
+ */
+export async function getChatIdsByMessageDateRange(
+  personaId: string,
+  start: Date,
+  end:   Date
+): Promise<string[]> {
+  const rows = await db
+    .select({ chatId: message.chatId })
+    .from(message)
+    .innerJoin(chat, eq(message.chatId, chat.id))
+    .where(and(
+      eq(chat.personaId, personaId),
+      gte(message.createdAt, start),
+      lte(message.createdAt, end)
+    ))
+    .groupBy(message.chatId)
+
+  return rows.map(r => r.chatId)
+}
+
+/**
+ * Given a chatId, pull back its transcript in the window
+ */
+export async function getTranscriptForChatInRange(
+  chatId: string,
+  start:  Date,
+  end:    Date
+): Promise<string> {
+  const rows = await db
+    .select({ content: message.content })
+    .from(message)
+    .where(and(
+      eq(message.chatId, chatId),
+      gte(message.createdAt, start),
+      lte(message.createdAt, end)
+    ))
+    .orderBy(asc(message.createdAt))
+
+  return rows
+    .map(r => typeof r.content === 'string' ? r.content : JSON.stringify(r.content))
+    .join(' ')
 }

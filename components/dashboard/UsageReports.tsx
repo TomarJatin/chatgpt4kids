@@ -6,52 +6,43 @@ import {
   Pie,
   Cell,
   ResponsiveContainer,
-  Legend,
 } from 'recharts'
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardContent,
 } from '@/components/ui/card'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 
-interface Usage {
-  totalMessages: number
-  flaggedWords: number
-  topicsExplored: number
-  newSubjects: number
-}
-
-interface FavoriteTopic {
-  topicName: string
-  percentage: number
-}
-
 interface AnalyticsPayload {
   date: string
-  usage: Usage
-  favoriteTopics: FavoriteTopic[]
+  usage: {
+    totalMessages: number
+    flaggedWords:   number
+    topicsExplored: number
+    newSubjects:    number
+  }
+  favoriteTopics: { topicName: string; percentage: number }[]
 }
 
 interface Props {
   childId: string
+  childName: string
+  childAvatarUrl: string | null
 }
 
 const COLORS = ['#7C5AFF', '#FFA5A5', '#67D7F9', '#F9D667']
 
-export default function UsageReports({ childId }: Props) {
-  const [data, setData] = useState<AnalyticsPayload | null>(null)
+export default function UsageReports({ childId, childName, childAvatarUrl }: Props) {
+  const [data, setData]       = useState<AnalyticsPayload | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError]     = useState<string | null>(null)
 
   useEffect(() => {
-    const today = new Date().toISOString().slice(0, 10)
-    fetch(`/api/parent/analytics/${childId}?date=${today}`, {
-      credentials: 'include',
-    })
+    const today = new Date().toISOString().slice(0,10)
+    setLoading(true)
+    fetch(`/api/parent/analytics/${childId}?date=${today}`, { credentials: 'include' })
       .then(res => {
         if (!res.ok) throw new Error('Failed to load usage report')
         return res.json() as Promise<AnalyticsPayload>
@@ -67,100 +58,89 @@ export default function UsageReports({ childId }: Props) {
       .finally(() => setLoading(false))
   }, [childId])
 
-  if (loading) return <p className="text-gray-900 dark:text-gray-100">Loading usage…</p>
-  if (error)   return <p className="text-red-600 dark:text-red-400">{error}</p>
-  if (!data)   return null
+  if (loading) return <p className="text-gray-500 dark:text-gray-400">Loading…</p>
+  if (error)   return <p className="text-destructive">{error}</p>
+  if (!data)   return <p className="text-gray-600 dark:text-gray-500">No data</p>
 
   const { usage, favoriteTopics } = data
   const pieData = favoriteTopics.map(t => ({ name: t.topicName, value: t.percentage }))
 
   return (
-    <Card className="">
-      <CardHeader>
-        <CardTitle className="text-gray-900 dark:text-gray-100">
-          Today’s Usage Report
-        </CardTitle>
-        <CardDescription className="text-gray-700 dark:text-gray-300">
-          Summary of activities today
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="space-y-6">
-        {/* Metric Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Total Messages',  value: usage.totalMessages },
-            { label: 'Flagged Words',   value: usage.flaggedWords   },
-            { label: 'Topics Explored', value: usage.topicsExplored },
-            { label: 'New Subjects',    value: usage.newSubjects    },
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg flex flex-col items-center"
-            >
-              <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                {item.value}
-              </p>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                {item.label}
-              </p>
-            </div>
-          ))}
+    <div className="space-y-6">
+      {/* HEADER outside card */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">
+            Today’s Usage Report
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Summary of {childName}’s activities today
+          </p>
         </div>
+        {/* <div className="flex items-center space-x-2">
+          <Avatar className="h-10 w-10">
+            {childAvatarUrl ? (
+              <AvatarImage src={childAvatarUrl} alt={childName} />
+            ) : (
+              <AvatarFallback>{childName[0]}</AvatarFallback>
+            )}
+          </Avatar>
+          <span className="text-gray-900 dark:text-white font-medium">
+            {childName}
+          </span>
+        </div> */}
+      </div>
 
-        <Separator className="dark:border-gray-700" />
-
-        {/* Chart + List */}
-        <div className="md:flex md:items-center md:space-x-8">
-          {/* Pie Chart */}
-          <div className="md:w-1/2 h-64">
-            <ResponsiveContainer>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  nameKey="name"
-                  innerRadius="60%"
-                  outerRadius="80%"
-                  paddingAngle={4}
-                >
-                  {pieData.map((_, idx) => (
-                    <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Legend
-                  layout="vertical"
-                  verticalAlign="middle"
-                  align="right"
-                  formatter={value => (
-                    <span className="text-gray-900 dark:text-gray-100 text-sm">
-                      {value}
-                    </span>
-                  )}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+      {/* CARD WITH METRICS & DONUT */}
+      <Card>
+        <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Metrics grid */}
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { label: 'Total Messages',  value: usage.totalMessages, color: 'text-indigo-500' },
+              { label: 'Flagged Words',   value: usage.flaggedWords,   color: 'text-red-500' },
+              { label: 'Topics Explored', value: usage.topicsExplored, color: 'text-green-500' },
+              { label: 'New Subjects',    value: usage.newSubjects,    color: 'text-blue-500' },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-6 flex flex-col items-center"
+              >
+                <p className={`text-4xl font-bold ${item.color}`}>
+                  {item.value}
+                </p>
+                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                  {item.label}
+                </p>
+              </div>
+            ))}
           </div>
 
-          {/* Topics List */}
-          <div className="md:w-1/2 space-y-4">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-              Topics Discussed
-            </h3>
-            <ul className="space-y-2">
-              {favoriteTopics.map((t, i) => (
-                <li
-                  key={i}
-                  className="flex justify-between text-sm text-gray-700 dark:text-gray-200"
-                >
-                  <span>{t.topicName}</span>
-                  <Badge variant="secondary">{t.percentage}%</Badge>
-                </li>
-              ))}
-            </ul>
+          {/* Donut / placeholder */}
+          <div className="flex flex-col items-center justify-center">
+            {pieData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius="60%"
+                    outerRadius="80%"
+                    paddingAngle={4}
+                  >
+                    {pieData.map((_, idx) => (
+                      <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400">No topics yet</p>
+            )}
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

@@ -64,13 +64,6 @@
       "when": 1743121064113,
       "tag": "0008_acoustic_pixie",
       "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1747601914152,
-      "tag": "0009_brief_shadowcat",
-      "breakpoints": true
     }
   ]
 }

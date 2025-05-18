@@ -151,15 +151,13 @@ export const document = pgTable(
     createdAt: timestamp('createdAt').notNull(),
     title: text('title').notNull(),
     content: text('content'),
-    kind: varchar('kind', { enum: ['text', 'code', 'image', 'sheet'] })
+    kind: varchar('text', { enum: ['text', 'code', 'image', 'sheet'] })
       .notNull()
       .default('text'),
     userId: uuid('userId').notNull().references(() => user.id),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.id, table.createdAt] }),
-    idx_user: index('idx_document_user').on(table.userId),
-    idx_created: index('idx_document_created').on(table.createdAt),
   })
 );
 export type Document = InferSelectModel<typeof document>;
@@ -178,14 +176,11 @@ export const suggestion = pgTable(
     createdAt: timestamp('createdAt').notNull(),
   },
   (table) => ({
+    pk: primaryKey({ columns: [table.id] }),
     documentRef: foreignKey({
       columns: [table.documentId, table.documentCreatedAt],
       foreignColumns: [document.id, document.createdAt],
-      name: 'fk_suggestion_document',
     }),
-    idx_document: index('idx_suggestion_document').on(table.documentId),
-    idx_user: index('idx_suggestion_user').on(table.userId),
-    idx_created: index('idx_suggestion_created').on(table.createdAt),
   })
 );
 export type Suggestion = InferSelectModel<typeof suggestion>;

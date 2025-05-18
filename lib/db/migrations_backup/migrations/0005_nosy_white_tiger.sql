@@ -1,0 +1,1 @@
+ALTER TABLE "User" ADD COLUMN "stripeStatusPaid" boolean DEFAULT false NOT NULL;

@@ -151,9 +151,17 @@ export async function POST(request: Request) {
         reason: pre.reason!,
       });
       return NextResponse.json(
-        { allowed: false, message: "Let’s talk about something else!" },
+        {
+          blocked: true,
+          message: "Let's talk about something else!",
+          reason: pre.reason // Optionally send the reason
+        },
         { status: 200 }
       );
+      // return NextResponse.json(
+      //   { allowed: false, message: "Let’s talk about something else!" },
+      //   { status: 200 }
+      // );
     }
 
     // 8) Stream to LLM as usual

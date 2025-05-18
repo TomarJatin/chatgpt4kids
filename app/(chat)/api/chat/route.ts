@@ -95,9 +95,9 @@ export async function POST(request: Request) {
     let settings = await getPersonaSettings(personaId);
 
     const { stripeStatusPaid } = await userPromise;
-    // if (!stripeStatusPaid) {
-    //   return new Response("Stripe subscription required", { status: 401 });
-    // }
+    if (!stripeStatusPaid) {
+      return new Response("Stripe subscription required", { status: 401 });
+    }
 
     if (!settings) {
       await upsertPersonaSettings({

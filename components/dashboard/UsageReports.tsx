@@ -14,6 +14,9 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
+import { AlertCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface AnalyticsPayload {
   date: string
@@ -58,9 +61,88 @@ export default function UsageReports({ childId, childName, childAvatarUrl }: Pro
       .finally(() => setLoading(false))
   }, [childId])
 
-  if (loading) return <p className="text-gray-500 dark:text-gray-400">Loading…</p>
-  if (error)   return <p className="text-destructive">{error}</p>
-  if (!data)   return <p className="text-gray-600 dark:text-gray-500">No data</p>
+  if (loading) return (
+    <div className="space-y-6">
+      {/* Skeleton Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <Skeleton className="h-9 w-64 mb-2" />
+          <Skeleton className="h-5 w-48" />
+        </div>
+      </div>
+
+      {/* Skeleton Card */}
+      <Card>
+        <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Metrics grid skeletons */}
+          <div className="grid grid-cols-2 gap-4">
+            {Array(4).fill(0).map((_, i) => (
+              <div
+                key={i}
+                className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-6 flex flex-col items-center"
+              >
+                <Skeleton className="h-10 w-16 mb-2" />
+                <Skeleton className="h-4 w-24" />
+              </div>
+            ))}
+          </div>
+
+          {/* Donut chart skeleton */}
+          <div className="flex flex-col items-center justify-center">
+            <div className="relative w-40 h-40">
+              <Skeleton className="h-40 w-40 rounded-full" />
+              <Skeleton className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 h-24 w-24 rounded-full bg-background" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+  
+  if (error) return (
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex items-center gap-2 text-destructive">
+          <AlertCircle className="h-5 w-5" />
+          <p>{error}</p>
+        </div>
+        <Button 
+          className="mt-4" 
+          onClick={() => {
+            setLoading(true)
+            const today = new Date().toISOString().slice(0,10)
+            fetch(`/api/parent/analytics/${childId}?date=${today}`, { credentials: 'include' })
+              .then(res => {
+                if (!res.ok) throw new Error('Failed to load usage report')
+                return res.json() as Promise<AnalyticsPayload>
+              })
+              .then(payload => {
+                setData(payload)
+                setError(null)
+              })
+              .catch(err => {
+                console.error(err)
+                setError(err.message)
+              })
+              .finally(() => setLoading(false))
+          }}
+        >
+          Try Again
+        </Button>
+      </CardContent>
+    </Card>
+  )
+  
+  if (!data) return (
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex flex-col items-center justify-center py-8">
+          <p className="text-gray-600 dark:text-gray-500 mb-2">No data available</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Usage data will appear here once available</p>
+        </div>
+      </CardContent>
+    </Card>
+  )
 
   const { usage, favoriteTopics } = data
   const pieData = favoriteTopics.map(t => ({ name: t.topicName, value: t.percentage }))
@@ -71,10 +153,10 @@ export default function UsageReports({ childId, childName, childAvatarUrl }: Pro
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-semibold text-gray-900 dark:text-white">
-            Today’s Usage Report
+            Today's Usage Report
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Summary of {childName}’s activities today
+            Summary of {childName}'s activities today
           </p>
         </div>
         {/* <div className="flex items-center space-x-2">

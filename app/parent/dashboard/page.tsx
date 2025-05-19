@@ -16,6 +16,7 @@ import AddChildModal, { LivePersona } from '@/components/dashboard/AddPersonaMod
 
 import { ModeToggle } from '@/components/ui/ThemeToggleButton'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -117,8 +118,67 @@ export default function ParentDashboardPage() {
   }
 
 
-  if (loading) return <p className="text-gray-500">Loading…</p>
-  if (error || !dashboard) return <p className="text-red-600">{error || 'Unknown error'}</p>
+  if (loading) return (
+    <div className="container mx-auto p-8 bg-white dark:bg-black min-h-screen space-y-8">
+      {/* Header Skeleton */}
+      <header className="flex items-center justify-between">
+        <Skeleton className="h-10 w-64" />
+        <div className="flex items-center space-x-3">
+          <Skeleton className="h-9 w-28" />
+          <Skeleton className="h-9 w-28" />
+          <Skeleton className="h-9 w-10 rounded-full" />
+        </div>
+      </header>
+
+      {/* Child Selector Skeleton */}
+      <ChildSelector
+        children={[]}
+        onChange={() => {}}
+        isLoading={true}
+      />
+
+      {/* Tabs Skeleton */}
+      <Skeleton className="h-12 w-full rounded-lg" />
+
+      {/* Main Content Skeleton */}
+      <AccountManagement 
+        isLoading={true}
+        list={[]}
+        onEdit={() => {}}
+        onDelete={() => {}}
+        onAdd={() => {}}
+        onChangePin={() => {}}
+      />
+    </div>
+  )
+  
+  if (error || !dashboard) return (
+    <div className="container mx-auto p-8 bg-white dark:bg-black min-h-screen flex items-center justify-center">
+      <div className="bg-destructive/10 p-6 rounded-lg text-destructive max-w-md mx-auto text-center">
+        <h3 className="text-xl font-semibold mb-2">Error Loading Dashboard</h3>
+        <p className="mb-4">{error || 'Unknown error loading dashboard data'}</p>
+        <Button 
+          onClick={() => {
+            setLoading(true)
+            setError(null)
+            fetch('/api/parent/dashboard', { credentials: 'include' })
+              .then(r => {
+                if (!r.ok) throw new Error('Failed to load dashboard')
+                return r.json() as Promise<ParentDashboard>
+              })
+              .then(data => {
+                setDashboard(data)
+                setActiveChild(data.children[0] || null)
+              })
+              .catch(e => setError(e.message))
+              .finally(() => setLoading(false))
+          }}
+        >
+          Try Again
+        </Button>
+      </div>
+    </div>
+  )
 
   // handlers
   function handleAddClick() {

@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ModeToggle } from '@/components/ui/ThemeToggleButton'
 import { PinDialog, PinMode } from '@/components/ui/pinDialog'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export default function SelectPersonaPage() {
   const router = useRouter()
@@ -119,7 +120,22 @@ export default function SelectPersonaPage() {
   }
 
   if (status === 'loading') {
-    return <div className="text-gray-500">Loading…</div>
+    return (
+      <div className="min-h-screen bg-white dark:bg-black flex flex-col items-center justify-center px-4 relative">
+        <div className="absolute top-4 right-4">
+          <Skeleton className="h-9 w-9 rounded-full" />
+        </div>
+        
+        <Skeleton className="h-12 w-48 mb-12" />
+        
+        <PersonaSelector
+          personas={[]}
+          onSelect={() => {}}
+          onAdd={() => {}}
+          isLoading={true}
+        />
+      </div>
+    )
   }
 
   return (

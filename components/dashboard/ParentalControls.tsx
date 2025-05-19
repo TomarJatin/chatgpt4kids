@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button'
 import { LoaderIcon } from '@/components/icons'
 import type { PersonaSettings } from '@/lib/db/schema'
 import { Input } from '@/components/ui/input'
+import { Skeleton } from '@/components/ui/skeleton'
+import { AlertCircle } from 'lucide-react'
 
 interface Props {
   childId: string
@@ -72,6 +74,7 @@ export default function ParentalControls({ childId, childName }: Props) {
   const [originalFilters, setOriginalFilters] = useState<{ id: string; word: string }[]>([])
   const [wfError, setWfError]                 = useState<string | null>(null)
   const [wfSaving, setWfSaving]               = useState(false)
+  const [wfLoading, setWfLoading]             = useState(true)
   const [newWord, setNewWord]                 = useState('')
 
   // Load settings
@@ -94,6 +97,7 @@ export default function ParentalControls({ childId, childName }: Props) {
 
   // Load word filters
   useEffect(() => {
+    setWfLoading(true)
     fetch(`/api/parent/children/${childId}/wordfilter`, { credentials: 'include' })
       .then(r => { if (!r.ok) throw new Error(); return r.json() })
       .then((list: { id: string; word: string }[]) => {
@@ -101,6 +105,7 @@ export default function ParentalControls({ childId, childName }: Props) {
         setWordFilters(list.map(f => f.word))
       })
       .catch(() => {})
+      .finally(() => setWfLoading(false))
   }, [childId])
 
   function resetToDefaults() {
@@ -178,8 +183,88 @@ export default function ParentalControls({ childId, childName }: Props) {
     }
   }
 
-  if (loading)   return <p className="text-gray-600 dark:text-gray-400">Loading…</p>
-  if (error)     return <p className="text-red-600 dark:text-red-400">{error}</p>
+  if (loading) return (
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-7 w-48" />
+        <Skeleton className="h-5 w-64 mt-1" />
+      </CardHeader>
+      <CardContent className="space-y-8">
+        {/* Skeleton for three sliders */}
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="space-y-1">
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-4 w-16 mx-auto" />
+          </div>
+        ))}
+        
+        <Separator />
+        
+        {/* Skeleton for buttons */}
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-9 w-20" />
+          <Skeleton className="h-9 w-32" />
+        </div>
+        
+        <Separator />
+        
+        {/* Skeleton for word filtering section */}
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-36" />
+          
+          <Skeleton className="h-10 w-full" />
+          <div className="flex flex-wrap gap-2">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-8 w-20 rounded-lg" />
+            ))}
+          </div>
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-9 w-20" />
+            <Skeleton className="h-9 w-32" />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+  
+  if (error) return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Content Restrictions</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+          <AlertCircle className="h-5 w-5" />
+          <p>{error}</p>
+        </div>
+        <Button 
+          className="mt-4" 
+          onClick={() => {
+            setError(null)
+            setLoading(true)
+            fetch(`/api/parent/children/${childId}/settings`, { credentials: 'include' })
+              .then(r => { if (!r.ok) throw new Error(); return r.json() })
+              .then((json: PersonaSettings & any) => {
+                setSettings({
+                  personaId:            json.personaId,
+                  topicRestriction:     json.topicRestriction,
+                  violenceFilterLevel:  json.violenceFilterLevel,
+                  politicsFilterLevel:  json.politicsFilterLevel,
+                  homeworkMode:         json.homeworkMode as boolean,
+                  wordFilteringEnabled: json.wordFilteringEnabled as boolean,
+                })
+              })
+              .catch(() => setError('Failed to load settings'))
+              .finally(() => setLoading(false))
+          }}
+        >
+          Try Again
+        </Button>
+      </CardContent>
+    </Card>
+  )
+  
   if (!settings) return null
 
   return (
@@ -239,12 +324,6 @@ export default function ParentalControls({ childId, childName }: Props) {
           {/* Word Filtering */}
           <div className="space-y-4">
             <h3 className="text-xl text-blue-600">Word Filtering</h3>
-            <ToggleRow
-              label="Enable Word Filtering"
-              desc="Block inappropriate language and get notifications when flagged"
-              checked={settings.wordFilteringEnabled}
-              onChange={v => setSettings(s => ({ ...s!, wordFilteringEnabled: v }))}
-            />
 
             {/* Input for adding new filter words */}
             <Input
@@ -264,22 +343,34 @@ export default function ParentalControls({ childId, childName }: Props) {
             />
 
             <div className="flex flex-wrap gap-2">
-              {wordFilters.map(w => (
-                <span
-                  key={w}
-                  className="flex items-center bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-lg px-3 py-1 text-sm"
-                >
-                  {w}
-                  <button
-                    type="button"
-                    onClick={() => setWordFilters(ws => ws.filter(x => x !== w))}
-                    className="ml-2 hover:text-red-600 dark:hover:text-red-400"
-                    disabled={wfSaving}
+              {wfLoading ? (
+                <div className="w-full py-4 flex justify-center">
+                  <div className="text-blue-500">
+                    <LoaderIcon size={24} />
+                  </div>
+                </div>
+              ) : wordFilters.length > 0 ? (
+                wordFilters.map(w => (
+                  <span
+                    key={w}
+                    className="flex items-center bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-lg px-3 py-1 text-sm"
                   >
-                    ×
-                  </button>
-                </span>
-              ))}
+                    {w}
+                    <button
+                      type="button"
+                      onClick={() => setWordFilters(ws => ws.filter(x => x !== w))}
+                      className="ml-2 hover:text-red-600 dark:hover:text-red-400"
+                      disabled={wfSaving}
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))
+              ) : (
+                <div className="w-full py-4 text-center text-gray-500 dark:text-gray-400 text-sm border border-dashed border-gray-300 dark:border-gray-700 rounded-md">
+                  No filtered words added yet. Type a word above and press Enter.
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between items-center">
@@ -291,7 +382,12 @@ export default function ParentalControls({ childId, childName }: Props) {
               </Button>
             </div>
 
-            {wfError && <p className="text-red-600 dark:text-red-400">{wfError}</p>}
+            {wfError && (
+              <div className="flex items-center gap-2 text-red-600 dark:text-red-400 mt-2">
+                <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                <p className="text-sm">{wfError}</p>
+              </div>
+            )}
           </div>
         </form>
       </CardContent>

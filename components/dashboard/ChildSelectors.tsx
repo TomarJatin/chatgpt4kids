@@ -4,6 +4,7 @@ import React from 'react'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type Child = { id: string; displayName: string; avatar: string | null }
 
@@ -11,9 +12,25 @@ interface Props {
   children: Child[]
   activeId?: string | null
   onChange: (id: string) => void
+  isLoading?: boolean
 }
 
-export default function ChildSelector({ children, activeId, onChange }: Props) {
+export default function ChildSelector({ children, activeId, onChange, isLoading = false }: Props) {
+  if (isLoading) {
+    return (
+      <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl shadow-sm">
+        <div className="flex items-center space-x-4 mb-4">
+          <Skeleton className="h-6 w-40" />
+        </div>
+        <div className="flex space-x-4">
+          {[1, 2, 3].map(i => (
+            <Skeleton key={i} className="h-12 w-12 rounded-full" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <ToggleGroup
       type="single"

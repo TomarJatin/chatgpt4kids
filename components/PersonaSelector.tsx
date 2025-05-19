@@ -6,6 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { PlusIcon } from '@heroicons/react/24/outline'
 import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export type Persona = {
   id: string
@@ -18,9 +19,35 @@ interface Props {
   personas: Persona[]
   onSelect: (p: Persona) => void
   onAdd: () => void
+  isLoading?: boolean
 }
 
-export default function PersonaSelector({ personas, onSelect, onAdd }: Props) {
+export default function PersonaSelector({ personas, onSelect, onAdd, isLoading = false }: Props) {
+  if (isLoading) {
+    return (
+      <Card className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
+        <CardContent className="mt-6 flex justify-evenly items-center space-x-12">
+          {Array(3).fill(0).map((_, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <div className="relative">
+                <Skeleton className="w-28 h-28 rounded-full" />
+                {i === 0 && (
+                  <Skeleton className="absolute -bottom-2 right-0 w-16 h-6 rounded-full" />
+                )}
+              </div>
+              <Skeleton className="mt-4 h-6 w-24" />
+            </div>
+          ))}
+          
+          <div className="flex flex-col items-center">
+            <Skeleton className="w-28 h-28 rounded-full" />
+            <Skeleton className="mt-4 h-6 w-24" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-2xl p-8 max-w-4xl mx-auto">
       {/* <CardHeader className="pb-0">

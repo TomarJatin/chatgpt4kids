@@ -287,6 +287,7 @@ export const FileIcon = ({ size = 16 }: { size?: number }) => {
 export const LoaderIcon = ({ size = 16 }: { size?: number }) => {
   return (
     <svg
+      className="animate-spin"
       height={size}
       strokeLinejoin="round"
       viewBox="0 0 16 16"

@@ -2,21 +2,25 @@
 
 import React, { useEffect, useState } from 'react'
 import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-} from 'recharts'
-import {
   Card,
   CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { AlertCircle } from 'lucide-react'
+import { AlertCircle, TrendingUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Pie, PieChart } from 'recharts'
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart'
 
 interface AnalyticsPayload {
   date: string
@@ -35,7 +39,32 @@ interface Props {
   childAvatarUrl: string | null
 }
 
-const COLORS = ['#7C5AFF', '#FFA5A5', '#67D7F9', '#F9D667']
+// Define chart colors using CSS variables
+const chartConfig = {
+  value: {
+    label: "Topics",
+  },
+  "Maurya Dynasty": {
+    label: "Maurya Dynasty",
+    color: "hsl(var(--chart-1))",
+  },
+  "Chandragupta Maurya": {
+    label: "Chandragupta Maurya",
+    color: "hsl(var(--chart-2))",
+  },
+  "Buddhism": {
+    label: "Buddhism",
+    color: "hsl(var(--chart-3))",
+  },
+  "Ashoka": {
+    label: "Ashoka",
+    color: "hsl(var(--chart-4))",
+  },
+  "Peace and Kindness": {
+    label: "Peace and Kindness",
+    color: "hsl(var(--chart-5))",
+  },
+} satisfies ChartConfig
 
 export default function UsageReports({ childId, childName, childAvatarUrl }: Props) {
   const [data, setData]       = useState<AnalyticsPayload | null>(null)
@@ -145,7 +174,12 @@ export default function UsageReports({ childId, childName, childAvatarUrl }: Pro
   )
 
   const { usage, favoriteTopics } = data
-  const pieData = favoriteTopics.map(t => ({ name: t.topicName, value: t.percentage }))
+  const pieData = favoriteTopics.map(t => ({ 
+    name: t.topicName, 
+    value: t.percentage,
+    fill: `hsl(var(--chart-${Math.floor(Math.random() * 5) + 1}))` // Random color from chart variables
+  }))
+  console.log('pieData', pieData)
 
   return (
     <div className="space-y-6">
@@ -159,25 +193,13 @@ export default function UsageReports({ childId, childName, childAvatarUrl }: Pro
             Summary of {childName}'s activities today
           </p>
         </div>
-        {/* <div className="flex items-center space-x-2">
-          <Avatar className="h-10 w-10">
-            {childAvatarUrl ? (
-              <AvatarImage src={childAvatarUrl} alt={childName} />
-            ) : (
-              <AvatarFallback>{childName[0]}</AvatarFallback>
-            )}
-          </Avatar>
-          <span className="text-gray-900 dark:text-white font-medium">
-            {childName}
-          </span>
-        </div> */}
       </div>
 
       {/* CARD WITH METRICS & DONUT */}
       <Card>
-        <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <CardContent className="p-8 flex md:flex-row flex-col items-center gap-8">
           {/* Metrics grid */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-3 gap-4 w-full">
             {[
               { label: 'Total Messages',  value: usage.totalMessages, color: 'text-indigo-500' },
               { label: 'Flagged Words',   value: usage.flaggedWords,   color: 'text-red-500' },
@@ -197,28 +219,36 @@ export default function UsageReports({ childId, childName, childAvatarUrl }: Pro
             ))}
           </div>
 
-          {/* Donut / placeholder */}
-          <div className="flex flex-col items-center justify-center">
-            {pieData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    dataKey="value"
-                    nameKey="name"
-                    innerRadius="60%"
-                    outerRadius="80%"
-                    paddingAngle={4}
-                  >
-                    {pieData.map((_, idx) => (
-                      <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-gray-500 dark:text-gray-400">No topics yet</p>
-            )}
+          {/* Updated Pie Chart */}
+          <div className="flex flex-col w-full">
+            <CardHeader className="items-center pb-0">
+              <CardTitle className="text-xl font-semibold">Topics Explored</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 pb-0">
+              {pieData.length > 0 ? (
+                <ChartContainer
+                  config={chartConfig}
+                  className="mx-auto aspect-square max-h-[250px]"
+                >
+                  <PieChart>
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent hideLabel />}
+                    />
+                    <Pie 
+                      data={pieData} 
+                      dataKey="value" 
+                      nameKey="name"
+                      innerRadius="60%"
+                      outerRadius="80%"
+                      paddingAngle={4}
+                    />
+                  </PieChart>
+                </ChartContainer>
+              ) : (
+                <p className="text-gray-500 dark:text-gray-400 text-center py-8">No topics yet</p>
+              )}
+            </CardContent>
           </div>
         </CardContent>
       </Card>

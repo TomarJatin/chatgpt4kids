@@ -255,8 +255,8 @@ export default function ChatSummaries({ childId }: Props) {
                 <div className="flex flex-col space-y-2">
                   <span className="text-gray-800 dark:text-gray-200">Interests</span>
                   <div className="flex flex-wrap gap-2">
-                    {day.interests.map((int, idx) => (
-                      <Badge key={idx}>{int}</Badge>
+                    {day.favoriteTopics.map((t, idx) => (
+                      <Badge key={idx}>{t.topicName}</Badge>
                     ))}
                   </div>
                 </div>

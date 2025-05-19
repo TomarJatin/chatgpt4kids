@@ -1,1 +1,1 @@
-export const URL_NEW_CHAT = "/chat/new";
+export const URL_NEW_CHAT = "/select-persona";

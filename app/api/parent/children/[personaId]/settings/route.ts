@@ -44,12 +44,12 @@ export async function GET(
       // return defaults for a brand-new child
       return NextResponse.json({
         personaId,
-        topicRestriction:    50,
-        violenceFilterLevel:    0,
-        politicsFilterLevel:    0,
-        homeworkMode:           false,
-        wordFilteringEnabled:   false,
-        updatedAt:              new Date(),
+        topicRestriction:     'medium',
+        violenceFilterLevel:  'low',
+        politicsFilterLevel:  'low',
+        homeworkMode:         false,
+        wordFilteringEnabled: false,
+        updatedAt:            new Date(),
       })
     }
 
@@ -78,6 +78,7 @@ export async function PUT(
     }
 
     const body = await request.json()
+
     const {
       topicRestriction,
       violenceFilterLevel,
@@ -86,24 +87,25 @@ export async function PUT(
       wordFilteringEnabled,
     } = body as Partial<PersonaSettings>
 
-    // basic validation
-    if (typeof topicRestriction !== 'number' ||
-        typeof violenceFilterLevel !== 'number' ||
-        typeof politicsFilterLevel !== 'number' ||
-        typeof homeworkMode !== 'boolean' ||
-        typeof wordFilteringEnabled !== 'boolean'
+    // basic validation - using the enum values from the schema
+    if ((topicRestriction !== undefined && !['low', 'medium', 'high'].includes(topicRestriction)) || 
+        (violenceFilterLevel !== undefined && !['low', 'medium', 'high'].includes(violenceFilterLevel)) || 
+        (politicsFilterLevel !== undefined && !['low', 'medium', 'high'].includes(politicsFilterLevel)) || 
+        (homeworkMode !== undefined && typeof homeworkMode !== 'boolean') || 
+        (wordFilteringEnabled !== undefined && typeof wordFilteringEnabled !== 'boolean')
     ) {
+
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
     }
 
     const existing = await getPersonaSettings(personaId)
     const updated: PersonaSettings = {
       personaId,
-      topicRestriction:       topicRestriction       ?? existing?.topicRestriction       ?? 50,
-      violenceFilterLevel:    violenceFilterLevel    ?? existing?.violenceFilterLevel    ?? 0,
-      politicsFilterLevel:    politicsFilterLevel    ?? existing?.politicsFilterLevel    ?? 0,
+      topicRestriction:       topicRestriction       ?? existing?.topicRestriction       ?? 'medium',
+      violenceFilterLevel:    violenceFilterLevel    ?? existing?.violenceFilterLevel    ?? 'low',
+      politicsFilterLevel:    politicsFilterLevel    ?? existing?.politicsFilterLevel    ?? 'low',
       homeworkMode:           homeworkMode           ?? existing?.homeworkMode           ?? false,
-      wordFilteringEnabled:   wordFilteringEnabled,
+      wordFilteringEnabled:   wordFilteringEnabled ?? existing?.wordFilteringEnabled ?? false,
       updatedAt:              new Date(),
     }
 

@@ -23,14 +23,15 @@ interface Props {
 
 type Settings = {
   personaId:            string
-  topicRestriction:     0 | 1 | 2
-  violenceFilterLevel:  0 | 1 | 2
-  politicsFilterLevel:  0 | 1 | 2
+  topicRestriction:     'low' | 'medium' | 'high'
+  violenceFilterLevel:  'low' | 'medium' | 'high'
+  politicsFilterLevel:  'low' | 'medium' | 'high'
   homeworkMode:         boolean
   wordFilteringEnabled: boolean
 }
 
 const FILTER_LABELS = ['Low', 'Medium', 'High'] as const
+const FILTER_VALUES = ['low', 'medium', 'high'] as const
 
 function ToggleRow({
   label,
@@ -80,9 +81,9 @@ export default function ParentalControls({ childId, childName }: Props) {
       .then((json: PersonaSettings & any) => {
         setSettings({
           personaId:            json.personaId,
-          topicRestriction:     json.topicRestriction as 0 | 1 | 2,
-          violenceFilterLevel:  json.violenceFilterLevel as 0 | 1 | 2,
-          politicsFilterLevel:  json.politicsFilterLevel as 0 | 1 | 2,
+          topicRestriction:     json.topicRestriction,
+          violenceFilterLevel:  json.violenceFilterLevel,
+          politicsFilterLevel:  json.politicsFilterLevel,
           homeworkMode:         json.homeworkMode as boolean,
           wordFilteringEnabled: json.wordFilteringEnabled as boolean,
         })
@@ -106,9 +107,9 @@ export default function ParentalControls({ childId, childName }: Props) {
     if (!settings) return
     setSettings({
       ...settings,
-      topicRestriction:     0,
-      violenceFilterLevel:  0,
-      politicsFilterLevel:  0,
+      topicRestriction:     'low',
+      violenceFilterLevel:  'low',
+      politicsFilterLevel:  'low',
       homeworkMode:         false,
       wordFilteringEnabled: false,
     })
@@ -130,9 +131,9 @@ export default function ParentalControls({ childId, childName }: Props) {
       const updated = (await res.json()) as PersonaSettings & any
       setSettings({
         personaId:            updated.personaId,
-        topicRestriction:     updated.topicRestriction as 0 | 1 | 2,
-        violenceFilterLevel:  updated.violenceFilterLevel as 0 | 1 | 2,
-        politicsFilterLevel:  updated.politicsFilterLevel as 0 | 1 | 2,
+        topicRestriction:     updated.topicRestriction,
+        violenceFilterLevel:  updated.violenceFilterLevel,
+        politicsFilterLevel:  updated.politicsFilterLevel,
         homeworkMode:         updated.homeworkMode,
         wordFilteringEnabled: updated.wordFilteringEnabled,
       })
@@ -200,18 +201,22 @@ export default function ParentalControls({ childId, childName }: Props) {
                 ? 'violenceFilterLevel'
                 : 'politicsFilterLevel'
             const value = settings[key]
+            
+            // Map string enum to slider index 
+            const valueIndex = FILTER_VALUES.indexOf(value)
+            
             return (
               <div key={key} className="space-y-1">
                 <h4 className="font-medium text-gray-800 dark:text-gray-200">{label}</h4>
                 <Slider
-                  value={[value]}
-                  onValueChange={([v]) => setSettings(s => ({ ...s!, [key]: v }))}
+                  value={[valueIndex]}
+                  onValueChange={([v]) => setSettings(s => ({ ...s!, [key]: FILTER_VALUES[v] }))}
                   min={0}
                   max={2}
                   step={1}
                 />
                 <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                  {FILTER_LABELS[value]}
+                  {FILTER_LABELS[valueIndex]}
                 </p>
               </div>
             )

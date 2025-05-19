@@ -427,10 +427,11 @@ export async function flagMessage({
 }: { 
   messageId: string; 
   flaggedByPersonaId: string; 
-  reason: 'violence' | 'politics' | 'wordFilter' | 'other'; 
+  reason: any; 
   details?: string; 
 }) {
   try {
+    console.log('flagging message', messageId, flaggedByPersonaId, reason, details);
     const id = crypto.randomUUID();
     await db.insert(flaggedMessage).values({ 
       id, 

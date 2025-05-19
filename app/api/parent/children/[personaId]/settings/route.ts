@@ -48,7 +48,7 @@ export async function GET(
         violenceFilterLevel:  'low',
         politicsFilterLevel:  'low',
         homeworkMode:         false,
-        wordFilteringEnabled: false,
+        wordFilteringEnabled: true,
         updatedAt:            new Date(),
       })
     }
@@ -105,7 +105,7 @@ export async function PUT(
       violenceFilterLevel:    violenceFilterLevel    ?? existing?.violenceFilterLevel    ?? 'low',
       politicsFilterLevel:    politicsFilterLevel    ?? existing?.politicsFilterLevel    ?? 'low',
       homeworkMode:           homeworkMode           ?? existing?.homeworkMode           ?? false,
-      wordFilteringEnabled:   wordFilteringEnabled ?? existing?.wordFilteringEnabled ?? false,
+      wordFilteringEnabled:   wordFilteringEnabled ?? existing?.wordFilteringEnabled ?? true,
       updatedAt:              new Date(),
     }
 

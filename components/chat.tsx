@@ -13,6 +13,7 @@ import { Messages } from './messages';
 import { VisibilityType } from './visibility-selector';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
+import { WarningDialog } from './warning-dialog';
 
 export function Chat({
   id,
@@ -30,6 +31,9 @@ export function Chat({
   childId?: string;
 }) {
   const { mutate } = useSWRConfig();
+  const [showWarning, setShowWarning] = useState(false);
+  const [warningReason, setWarningReason] = useState<string>('');
+  const [warningMessage, setWarningMessage] = useState<string>("Let's talk about something else!");
 
   const {
     messages,
@@ -57,26 +61,56 @@ export function Chat({
       toast.error(`An error occured, please try again! (${error.message})`);
     },
     onResponse: async (res) => {
+      // Check if this is a JSON response
       const ct = res.headers.get('content-type') || '';
+      console.log('🔍 Response Content-Type:', ct);
+      
       if (ct.includes('application/json')) {
+        console.log('📄 Detected JSON response');
         try {
-          const data = await res.clone().json();
+          // Clone the response to avoid consuming it
+          const clonedRes = res.clone();
+          const data = await clonedRes.json();
+          console.log('📦 Response data:', data);
+          
+          // Check if the message was blocked
           if (data?.blocked === true) {
-            // 1) stop the ongoing SDK stream
+            console.log('🚫 Message blocked - Reason:', data.reason);
+            
+            // Force stop the stream
+            console.log('🛑 Stopping stream');
             stop();
-    
-            // 2) render fallback bubble
+
+            // Set warning data
+            setWarningReason(data.reason || 'inappropriate content');
+            setWarningMessage(data.message || "Let's talk about something else!");
+            setShowWarning(true);
+            
+            // Return early without value
+            return;
+          }
+        } catch (error) {
+          console.error('❌ Error processing JSON response:', error);
+          // If it wasn't our JSON or there was an error, stop the stream and recover
+          if (ct.includes('application/json')) {
+            console.log('🛑 Stopping stream due to JSON parsing error');
+            stop();
+            setMessages((current) => [...current]); // Force refresh
+            
+            // Add a fallback response
+            console.log('💬 Adding fallback response');
             append({
               id: generateUUID(),
               role: 'assistant',
-              content: data.message ?? "Let’s talk about something else!",
+              content: "I encountered an error processing that message. Let's try something else!",
             });
+            
+            // Return early without value
+            return;
           }
-        } catch {
-          // if it wasn’t our JSON, just ignore and let default streaming continue
         }
       }
-      // no return value — this must be void
+      console.log('✅ Continuing with normal stream processing');
     },
   });
 
@@ -89,6 +123,10 @@ export function Chat({
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
+
+  const handleCloseWarning = () => {
+    setShowWarning(false);
+  };
 
   return (
     <>
@@ -147,6 +185,13 @@ export function Chat({
         reload={reload}
         votes={votes}
         isReadonly={isReadonly}
+      />
+
+      <WarningDialog
+        isOpen={showWarning}
+        onClose={handleCloseWarning}
+        reason={warningReason}
+        message={warningMessage}
       />
     </>
   );

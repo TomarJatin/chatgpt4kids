@@ -116,7 +116,7 @@ export default function ParentalControls({ childId, childName }: Props) {
       violenceFilterLevel:  'low',
       politicsFilterLevel:  'low',
       homeworkMode:         false,
-      wordFilteringEnabled: false,
+      wordFilteringEnabled: true,
     })
   }
 

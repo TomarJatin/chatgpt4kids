@@ -113,7 +113,7 @@ export default function AddChildModal({ onClose, onCreated }: Props) {
             />
           </div>
 
-          <div className="space-y-1">
+          {/* <div className="space-y-1">
             <Label>Avatar (optional)</Label>
             <div className="flex items-center space-x-4">
               <Avatar>
@@ -130,7 +130,7 @@ export default function AddChildModal({ onClose, onCreated }: Props) {
                 onChange={e => setFile(e.target.files?.[0] || null)}
               />
             </div>
-          </div>
+          </div> */}
 
           <DialogFooter>
             <Button variant="outline" onClick={onClose} disabled={saving}>

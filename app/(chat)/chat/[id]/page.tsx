@@ -13,6 +13,8 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const { id } = params;
   const chat = await getChatById({ id });
 
+  console.log('chat', chat);
+
   if (!chat) {
     notFound();
   }
@@ -49,7 +51,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           selectedChatModel={DEFAULT_CHAT_MODEL}
           selectedVisibilityType={chat.visibility}
           isReadonly={session?.user?.id !== chat.userId}
-          childId={chat.personaId}
+          childId={chat.personaId ?? undefined}
         />
         <DataStreamHandler id={id} />
       </>
@@ -64,7 +66,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         selectedChatModel={chatModelFromCookie.value}
         selectedVisibilityType={chat.visibility}
         isReadonly={session?.user?.id !== chat.userId}
-        childId={chat.personaId}
+        childId={chat.personaId ?? undefined}
       />
       <DataStreamHandler id={id} />
     </>

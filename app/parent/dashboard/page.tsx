@@ -119,7 +119,7 @@ export default function ParentDashboardPage() {
 
 
   if (loading) return (
-    <div className="container mx-auto p-8 bg-white dark:bg-black min-h-screen space-y-8">
+    <div className=" w-full bg-white p-8  dark:bg-black min-h-screen space-y-8">
       {/* Header Skeleton */}
       <header className="flex items-center justify-between">
         <Skeleton className="h-10 w-64" />
@@ -153,7 +153,7 @@ export default function ParentDashboardPage() {
   )
   
   if (error || !dashboard) return (
-    <div className="container mx-auto p-8 bg-white dark:bg-black min-h-screen flex items-center justify-center">
+    <div className="w-full p-8 bg-white dark:bg-black min-h-screen flex items-center justify-center">
       <div className="bg-destructive/10 p-6 rounded-lg text-destructive max-w-md mx-auto text-center">
         <h3 className="text-xl font-semibold mb-2">Error Loading Dashboard</h3>
         <p className="mb-4">{error || 'Unknown error loading dashboard data'}</p>
@@ -211,7 +211,7 @@ export default function ParentDashboardPage() {
   }
 
   return (
-    <div className="container mx-auto p-8 bg-white dark:bg-black min-h-screen space-y-8">
+    <div className="w-full p-8 bg-white dark:bg-black min-h-screen space-y-8">
       {/* Header */}
       <header className="flex items-center justify-between">
         <h1 className="text-3xl font-semibold dark:text-white">

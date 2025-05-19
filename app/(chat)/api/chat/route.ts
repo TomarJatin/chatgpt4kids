@@ -18,7 +18,8 @@ import {
   flagMessage,
   upsertDailyUsageReport,
   getPersonaById,
-  processExtractedTopics
+  processExtractedTopics,
+  getMessageById,
 } from '@/lib/db/queries';
 
 
@@ -93,6 +94,7 @@ export async function POST(request: Request) {
 
     // 2) Load or init parental settings
     let settings = await getPersonaSettings(personaId);
+    console.log('🌟 settings', settings);
 
     const { stripeStatusPaid } = await userPromise;
     if (!stripeStatusPaid) {
@@ -106,7 +108,7 @@ export async function POST(request: Request) {
         violenceFilterLevel: 'high',
         politicsFilterLevel: 'high',
         homeworkMode: false,
-        wordFilteringEnabled: false,
+        wordFilteringEnabled: true,
         updatedAt: new Date(),
       });
       settings = await getPersonaSettings(personaId)!;
@@ -117,12 +119,16 @@ export async function POST(request: Request) {
       ? (await getWordFilters(personaId)).map((w) => w.word)
       : [];
 
+    console.log('🌟 customWords', customWords);
+
     // 4) Read request
     
 
     // 5) Lookup or create chat
     const chat = await getChatById({ id });
+    console.log('🌟 chat', chat);
     const userMessage = getMostRecentUserMessage(messages);
+    console.log('🌟 userMessage', userMessage);
     if (!userMessage) {
       return new Response('No user message found', { status: 400 });
     }
@@ -138,30 +144,75 @@ export async function POST(request: Request) {
     }
 
     // 6) Save incoming message (so flagMessage FK is valid)
-    await saveMessages({
-      messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
-    });
+    // await saveMessages({
+    //   messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
+    // });
 
     // 7) Pre-filter check
     const pre = preProcessUserMessage(userMessage.content, settings!, customWords);
+    console.log('🌟 pre-filter check result:', pre);
     if (!pre.allowed) {
-      await flagMessage({
-        messageId: userMessage.id,
-        flaggedByPersonaId: personaId,
-        reason: pre.reason!,
-      });
-      return NextResponse.json(
-        {
-          blocked: true,
-          message: "Let's talk about something else!",
-          reason: pre.reason // Optionally send the reason
-        },
-        { status: 200 }
-      );
-      // return NextResponse.json(
-      //   { allowed: false, message: "Let’s talk about something else!" },
-      //   { status: 200 }
-      // );
+      try {
+        console.log('🚫 Message blocked - Reason:', pre.reason);
+        
+        // Check if message already exists in database before saving
+        const existingMessages = await getMessageById({ id: userMessage.id });
+        
+        // Only save if message doesn't already exist
+        if (!existingMessages || existingMessages.length === 0) {
+          console.log('💾 Saving blocked message to database:', userMessage.id);
+          // Save incoming message before flagging it
+          await saveMessages({
+            messages: [{ ...userMessage, createdAt: new Date(), chatId: id }],
+          });
+        } else {
+          console.log('⚠️ Message already exists in database:', userMessage.id);
+        }
+
+        console.log('🚩 Flagging message:', userMessage.id);
+        console.log("flagging message", userMessage);
+        await flagMessage({
+          messageId: userMessage.id,
+          flaggedByPersonaId: personaId,
+          reason: pre.matched,
+          details: pre.reason
+        });
+        
+        console.log('🔄 Returning blocked message response');
+        
+        // Create a plain Response object with JSON content type
+        return new Response(
+          JSON.stringify({
+            blocked: true,
+            message: "Let's talk about something else!",
+            reason: pre.reason
+          }), 
+          {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        
+      } catch (err) {
+        console.error('❌ Error saving/flagging message:', err);
+        
+        // Create a plain Response object with JSON content type
+        return new Response(
+          JSON.stringify({
+            blocked: true,
+            message: "Let's talk about something else!",
+            reason: pre.reason
+          }), 
+          {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+      }
     }
 
     // 8) Stream to LLM as usual
@@ -189,55 +240,18 @@ export async function POST(request: Request) {
             updateDocument: updateDocument({ session, dataStream }),
             requestSuggestions: requestSuggestions({ session, dataStream }),
           },
-          // onFinish: async ({ response, reasoning, usage }) => {
-          //   try {
-          //     // sanitize SDK artifacts
-          //     const sanitized = sanitizeResponseMessages({ messages: response.messages, reasoning });
-          //     const finalMessages: typeof sanitized = [];
-
-          //     for (const msg of sanitized) {
-          //       if (msg.role === 'assistant') {
-          //         const text = typeof msg.content === 'string'
-          //           ? msg.content
-          //           : msg.content.map((c: any) => ('text' in c ? c.text : '')).join('');
-          //         const { message: filtered, wasFiltered, filterReason } =
-          //           postProcessLLMResponse(text, settings!, customWords);
-          //         if (wasFiltered) {
-          //           await flagMessage({
-          //             messageId: msg.id,
-          //             flaggedByPersonaId: personaId,
-          //             reason: filterReason!,
-          //           });
-          //         }
-          //         finalMessages.push({ ...msg, content: filtered });
-          //       } else {
-          //         finalMessages.push(msg);
-          //       }
-          //     }
-
-          //     // persist assistant/tool messages
-          //     await saveMessages({
-          //       messages: finalMessages.map((m) => ({
-          //         id: m.id,
-          //         chatId: id,
-          //         role: m.role,
-          //         content: m.content,
-          //         createdAt: new Date(),
-          //       })),
-          //       usage: { chatId: id, msgId: userMessage.id, category: 'ai-sdk-chat', usage },
-          //     });
-          //   } catch (err) {
-          //     console.error('onFinish error:', err);
-          //   }
-          // },
-
           onFinish: async ({ response, reasoning, usage }) => {
             try {
               // 1) sanitize and build finalMessages
               const sanitized = sanitizeResponseMessages({ messages: response.messages, reasoning });
               const finalMessages: Array<{ id: string; role: string; content: any }> = [];
               const flags: Array<{ messageId: string; reason: 'violence'|'politics'|'wordFilter' }> = [];
-          
+              console.log("sanitized", sanitized);
+              console.log("response", response);
+              console.log("reasoning", reasoning);
+              console.log("usage", usage);
+              console.log("finalMessages", finalMessages);
+              console.log("flags", flags);
           
               for (const msg of sanitized) {
                 if (msg.role === 'assistant') {

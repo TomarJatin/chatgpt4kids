@@ -43,6 +43,7 @@ import {
   preProcessUserMessage,
   postProcessLLMResponse,
 } from '@/lib/ai/guardRails';
+import { extractTopicsFromConversation } from '@/lib/ai/tools/extract-topics';
 // import { extractTopicsFromConversation } from '@/lib/ai/tools/extract-tools';
 
 export const maxDuration = 60;
@@ -245,7 +246,7 @@ export async function POST(request: Request) {
               // 1) sanitize and build finalMessages
               const sanitized = sanitizeResponseMessages({ messages: response.messages, reasoning });
               const finalMessages: Array<{ id: string; role: string; content: any }> = [];
-              const flags: Array<{ messageId: string; reason: 'violence'|'politics'|'wordFilter' }> = [];
+              const flags: Array<{ messageId: string; reason: 'violence' | 'politics' | 'wordFilter' | 'abusive' | 'inappropriate' | string }> = [];
               console.log("sanitized", sanitized);
               console.log("response", response);
               console.log("reasoning", reasoning);
@@ -310,32 +311,36 @@ export async function POST(request: Request) {
                 });
               }
           
-              // 4) upsert daily usage report
-              // const today = new Date().toISOString().slice(0,10)
-              // await upsertDailyUsageReport({
-              //   personaId:       personaId,
-              //   date:            today,
-              //   chatsStarted:    1,
-              //   messagesSent:    usage.promptTokens + usage.completionTokens,
-              //   wordsSent:       usage.promptTokens + usage.completionTokens,  // or exact word count
-              // })
+              // 4) upsert daily usage report (non-blocking)
+              const today = new Date().toISOString().slice(0,10);
+              // Fire and forget - don't await
+              upsertDailyUsageReport({
+                personaId:       personaId,
+                date:            today,
+                chatsStarted:    1,
+                messagesSent:    usage.promptTokens + usage.completionTokens,
+                wordsSent:       usage.promptTokens + usage.completionTokens,  // approximate word count
+              }).catch(err => console.error('Failed to update daily usage report:', err));
           
-              // 5) Extract and save topics from the conversation
-              // const assistantText = response.messages
-              //   .filter(m => m.role === 'assistant')
-              //   .map(m => typeof m.content === 'string' ? m.content : JSON.stringify(m.content))
-              //   .join(' ')
+              // 5) Extract and save topics from the conversation (non-blocking)
+              const assistantText = response.messages
+                .filter(m => m.role === 'assistant')
+                .map(m => typeof m.content === 'string' ? m.content : JSON.stringify(m.content))
+                .join(' ');
 
-              // const fullTranscript = 
-              //   messages.map(m => typeof m.content === 'string' ? m.content : JSON.stringify(m.content)).join(' ')
-              //   + ' ' + assistantText
+              const fullTranscript = 
+                messages.map(m => typeof m.content === 'string' ? m.content : JSON.stringify(m.content)).join(' ')
+                + ' ' + assistantText;
 
-              // console.log('► fullTranscript:', fullTranscript.slice(0,200))
-              // // kick off extraction without awaiting it
-              // extractTopicsFromConversation(fullTranscript)
-              //   .then(topics => processExtractedTopics(id, topics))
-              //   .catch(err => console.error('Topic extraction failed:', err))
-
+              console.log('► Starting topic extraction for chat:', id);
+              // Fire and forget - don't await  
+              extractTopicsFromConversation(fullTranscript)
+                .then((topics: { name: string; relevance: number }[]) => {
+                  console.log('► Topics extracted:', topics);
+                  return processExtractedTopics(id, topics);
+                })
+                .then(() => console.log('► Topics processed successfully for chat:', id))
+                .catch((err: Error) => console.error('Topic extraction failed:', err));
               
             } catch (err) {
               console.error('onFinish error:', err);

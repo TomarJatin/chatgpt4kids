@@ -14,6 +14,7 @@ import { VisibilityType } from './visibility-selector';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
 import { WarningDialog } from './warning-dialog';
+import { FilterReason } from '@/lib/ai/guardRails';
 
 export function Chat({
   id,
@@ -32,7 +33,7 @@ export function Chat({
 }) {
   const { mutate } = useSWRConfig();
   const [showWarning, setShowWarning] = useState(false);
-  const [warningReason, setWarningReason] = useState<string>('');
+  const [warningReason, setWarningReason] = useState<FilterReason | string>('inappropriate');
   const [warningMessage, setWarningMessage] = useState<string>("Let's talk about something else!");
 
   const {
@@ -82,7 +83,7 @@ export function Chat({
             stop();
 
             // Set warning data
-            setWarningReason(data.reason || 'inappropriate content');
+            setWarningReason(data.reason || 'inappropriate');
             setWarningMessage(data.message || "Let's talk about something else!");
             setShowWarning(true);
             

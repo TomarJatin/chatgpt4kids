@@ -13,11 +13,12 @@ import {
 } from '@/components/ui/alert-dialog';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { FilterReason } from '@/lib/ai/guardRails';
 
 interface WarningDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  reason?: string;
+  reason?: FilterReason | string;
   message?: string;
   className?: string;
 }
@@ -25,7 +26,7 @@ interface WarningDialogProps {
 export function WarningDialog({
   isOpen,
   onClose,
-  reason = 'inappropriate content',
+  reason = 'inappropriate',
   message = "Let's talk about something else!",
   className,
 }: WarningDialogProps) {
@@ -55,6 +56,24 @@ export function WarningDialog({
       return () => window.removeEventListener('keydown', handleTabKey);
     }
   }, [isOpen, onClose]);
+
+  // Get appropriate warning message based on reason
+  const getWarningMessage = () => {
+    switch (reason) {
+      case 'violence':
+        return "Your message contains content about violence that isn't appropriate.";
+      case 'politics':
+        return "Your message contains political content that isn't appropriate.";
+      case 'abusive':
+        return "Your message contains words that aren't kind or appropriate.";
+      case 'wordFilter':
+        return "Your message contains words that have been filtered by your parents.";
+      case 'inappropriate':
+        return "Your message contains topics that aren't appropriate.";
+      default:
+        return "Your message contains words that are not appropriate.";
+    }
+  };
 
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -94,8 +113,10 @@ export function WarningDialog({
             transition={{ delay: 0.15, duration: 0.4 }}
             className="w-full"
           >
-            <AlertDialogDescription className="dark:text-white text-center mt-3 text-base">
-            Your message contains words that are not appropriate.
+            <AlertDialogDescription className="text-gray-700 mt-3 text-base">
+              <p className="mb-3 text-center dark:text-white">
+                {getWarningMessage()}
+              </p>
             </AlertDialogDescription>
           </motion.div>
         </AlertDialogHeader>

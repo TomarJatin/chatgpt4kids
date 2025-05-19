@@ -182,7 +182,6 @@ export default function UsageReports({ childId, childName, childAvatarUrl }: Pro
               { label: 'Total Messages',  value: usage.totalMessages, color: 'text-indigo-500' },
               { label: 'Flagged Words',   value: usage.flaggedWords,   color: 'text-red-500' },
               { label: 'Topics Explored', value: usage.topicsExplored, color: 'text-green-500' },
-              { label: 'New Subjects',    value: usage.newSubjects,    color: 'text-blue-500' },
             ].map((item, i) => (
               <div
                 key={i}

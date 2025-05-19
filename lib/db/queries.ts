@@ -572,7 +572,8 @@ export async function processExtractedTopics(
           )
         );
       
-      const relevanceScore = topicData.relevance || 1;
+      // Convert decimal relevance score to integer by multiplying by 100
+      const relevanceScore = Math.round((topicData.relevance || 1) * 100);
       
       if (existingChatTopics.length > 0) {
         // Update the existing relationship with highest relevance
@@ -582,12 +583,27 @@ export async function processExtractedTopics(
           relevanceScore: Math.max(relevanceScore, existingChatTopics[0].relevanceScore)
         });
       } else {
-        // Create a new relationship
-        await addChatTopic({
-          chatId,
-          topicId,
-          relevanceScore
-        });
+        // Create a new relationship - handle possible duplicate inserts gracefully
+        try {
+          await addChatTopic({
+            chatId,
+            topicId,
+            relevanceScore
+          });
+        } catch (insertError: any) {
+          // If this is a duplicate key error, just update the existing record instead
+          if (insertError.code === '23505') { // PostgreSQL duplicate key error code
+            console.log(`Topic already exists for chat, updating instead: ${chatId}, ${topicId}`);
+            await updateChatTopic({
+              chatId,
+              topicId,
+              relevanceScore
+            });
+          } else {
+            // For other errors, rethrow
+            throw insertError;
+          }
+        }
       }
     } catch (error) {
       console.error('Error saving topic:', error);
@@ -1041,7 +1057,7 @@ export async function getInterestsForPersonaInDateRange(
 }
 
 /**
- * How many messages did this child’s chats see in the time window?
+ * How many messages did this child's chats see in the time window?
  */
 export async function getMessageCountForDateRange(
   personaId: string,
@@ -1062,7 +1078,7 @@ export async function getMessageCountForDateRange(
 }
 
 /**
- * Get every “child” persona in the system
+ * Get every "child" persona in the system
  */
 export async function getAllChildPersonas(): Promise<Persona[]> {
   return db
